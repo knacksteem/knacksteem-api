@@ -29,7 +29,7 @@ exports.register = async (req, res, next) => {
     res.status(httpStatus.CREATED);
     return res.json({ token, user: userTransformed });
   } catch (error) {
-    return next(User.checkDuplicateEmail(error));
+    return next(User.checkDuplicateUsername(error));
   }
 };
 

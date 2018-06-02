@@ -23,8 +23,7 @@ if (env === 'development') {
 */
 exports.connect = () => {
   mongoose.connect(mongo.uri, {
-    keepAlive: 1,
-    useMongoClient: true,
+    keepAlive: 1
   });
   return mongoose.connection;
 };
