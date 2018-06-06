@@ -31,5 +31,4 @@ const oAuth = service => async (token, done) => {
 };
 
 exports.jwt = new JwtStrategy(jwtOptions, jwt);
-exports.facebook = new BearerStrategy(oAuth('facebook'));
-exports.google = new BearerStrategy(oAuth('google'));
+

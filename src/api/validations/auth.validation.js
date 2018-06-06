@@ -13,7 +13,7 @@ module.exports = {
   login: {
     body: {
       username: Joi.string().max(16).required(),
-      sc2token: Joi.string().required().max(128),
+      user: Joi.object().required(),
     },
   },
 
