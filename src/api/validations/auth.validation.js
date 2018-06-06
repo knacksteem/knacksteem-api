@@ -13,7 +13,7 @@ module.exports = {
   login: {
     body: {
       username: Joi.string().max(16).required(),
-      user: Joi.object().required(),
+      userObject: Joi.object().required(),
     },
   },
 

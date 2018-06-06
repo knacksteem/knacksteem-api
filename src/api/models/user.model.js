@@ -46,14 +46,6 @@ const userSchema = new mongoose.Schema({
  * - validations
  * - virtuals
  */
-userSchema.pre('save', async function save(next) {
-  try {
-
-    return next();
-  } catch (error) {
-    return next(error);
-  }
-});
 
 /**
  * Methods
@@ -113,6 +105,26 @@ userSchema.statics = {
     }
   },
 
+  async checkExists(username) {
+    try {
+      let user;
+
+      if (username) {
+        user = await this.findOne({'username': username}).exec();
+      }
+      if (user) {
+        return user;
+      }
+
+      throw new APIError({
+        message: 'User does not exist',
+        status: httpStatus.NOT_FOUND,
+      });
+    } catch (error) {
+      throw error;
+    }
+  },
+
   /**
    * Find user by username and tries to generate a JWT token
    *
@@ -120,15 +132,19 @@ userSchema.statics = {
    * @returns {Promise<User, APIError>}
    */
   async findAndGenerateToken(options) {
-    const { username, sc2token, refreshObject } = options;
+    const { username, userObject, refreshObject } = options;
     if (!username) throw new APIError({ message: 'An username is required to generate a token' });
 
-    const user = await this.findOne({ username }).exec();
+    let user = await this.findOne({ username }).exec();
+
+    if(!user) {
+      user = await this.create({'username' :username, 'user': userObject, 'role':'contributor'})
+    }
     const err = {
       status: httpStatus.UNAUTHORIZED,
       isPublic: true,
     };
-    if (sc2token) {
+    if (userObject) {
         return { user, accessToken: user.token() };
       
       //err.message = 'Incorrect email or password';
