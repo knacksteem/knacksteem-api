@@ -36,13 +36,17 @@ exports.createPost = async (req, res, next) => {
  * Get posts from database based on criteria and sorting.
  * @param {Object} criteria: Fields to project from database
  * @param {Object} sort: Sorting strategy
+ * @param {Number} limit: how much posts will be pulled
+ * @param {Number} skip: how much posts will be skiped (useful for pagination)
  * @author Jayser Mendez
  * @private
  * @returns an array with the posts from database response
  */
-const getPosts = async (criteria, sort) => {
+const getPosts = async (criteria, sort, limit, skip) => {
   try {
-    const postsList = await Post.find(criteria).sort(sort);
+    limit = parseInt(limit, 10);
+    skip = parseInt(skip, 10);
+    const postsList = await Post.find(criteria).sort(sort).limit(limit || 25).skip(skip || 0);
     return {
       results: postsList,
       count: postsList.length,
@@ -61,7 +65,9 @@ const getPosts = async (criteria, sort) => {
 exports.getAllPosts = async (req, res, next) => {
   try {
     // Query the posts from database in a descending order.
-    const postsList = await getPosts({}, { createdAt: -1 });
+    const { limit, skip } = req.query;
+    const sort = { createdAt: -1 };
+    const postsList = await getPosts({}, sort, limit, skip);
 
     // Send the posts to the client in a formatted JSON.
     return res.send(postsList);
@@ -80,7 +86,10 @@ exports.getAllPosts = async (req, res, next) => {
 exports.getPostsByAuthor = async (req, res, next) => {
   try {
     // Query the posts from database in a descending order.
-    const postsList = await getPosts({ author: req.query.username }, { createdAt: -1 });
+    const { limit, skip } = req.query;
+    const author = { author: req.query.username };
+    const sort = { createdAt: -1 };
+    const postsList = await getPosts(author, sort, limit, skip);
 
     // Send the posts to the client in a formatted JSON.
     return res.send(postsList);
