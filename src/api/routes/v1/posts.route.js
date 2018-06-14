@@ -8,4 +8,6 @@ const router = express.Router();
 // TODO: Add validation to the parameters.
 router.route('/create').post(sc2Middleware, checkUserMiddleware, controller.createPost);
 
+router.route('/all').get(controller.getAllPosts);
+
 module.exports = router;

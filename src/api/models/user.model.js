@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 const httpStatus = require('http-status');
 const { omitBy, isNil } = require('lodash');
-const bcrypt = require('bcryptjs');
 const moment = require('moment-timezone');
 const jwt = require('jwt-simple');
-const uuidv4 = require('uuid/v4');
 const APIError = require('../utils/APIError');
-const { env, jwtSecret, jwtExpirationInterval } = require('../../config/vars');
+const { jwtSecret, jwtExpirationInterval } = require('../../config/vars');
 
 /**
 * User Roles
@@ -110,7 +108,7 @@ userSchema.statics = {
       let user;
 
       if (username) {
-        user = await this.findOne({ username: username }).exec();
+        user = await this.findOne({ username }).exec();
       }
       if (user) {
         return user;
@@ -137,22 +135,22 @@ userSchema.statics = {
 
     let user = await this.findOne({ username }).exec();
 
-    if(!user) {
-      user = await this.create({'username' :username, 'user': userObject, 'role':'contributor'})
+    if (!user) {
+      user = await this.create({ username, user: userObject, role: 'contributor' });
     }
     const err = {
       status: httpStatus.UNAUTHORIZED,
       isPublic: true,
     };
     if (userObject) {
-        return { user, accessToken: user.token() };
-      
-      //err.message = 'Incorrect email or password';
+      return { user, accessToken: user.token() };
+
+      // err.message = 'Incorrect email or password';
     } else if (refreshObject && refreshObject.username === username) {
       return { user, accessToken: user.token() };
-    } 
-      err.message = 'Incorrect username or refreshToken';
-    
+    }
+    err.message = 'Incorrect username or refreshToken';
+
     throw new APIError(err);
   },
 

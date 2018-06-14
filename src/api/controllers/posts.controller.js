@@ -12,7 +12,7 @@ exports.createPost = async (req, res, next) => {
       title: req.body.title,
       description: req.body.description,
       author: res.locals.username,
-      tags: res.body.tags,
+      tags: req.body.tags || [],
     });
 
     // Insert the post into database.
@@ -29,5 +29,28 @@ exports.createPost = async (req, res, next) => {
   // If any error, catch it
   } catch (error) {
     return next(error);
+  }
+};
+
+/**
+ * Get all posts from database
+ * @author Jayser Mendez
+ * @public
+ */
+exports.getAllPosts = async (req, res, next) => {
+  try {
+    // Query the posts from database in a descending order.
+    const postsList = await Post.find().sort({ createdAt: -1 });
+
+    // Send the posts to the client in a formatted JSON.
+    return res.send({
+      results: postsList,
+      count: postsList.length,
+      status: 200,
+    });
+
+  // Catch any possible error
+  } catch (err) {
+    return next(err);
   }
 };

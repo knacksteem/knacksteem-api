@@ -1,4 +1,3 @@
-const httpStatus = require('http-status');
 const User = require('../models/user.model');
 const RefreshToken = require('../models/refreshToken.model');
 const moment = require('moment-timezone');

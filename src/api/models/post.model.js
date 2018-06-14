@@ -28,6 +28,9 @@ const postSchema = new mongoose.Schema({
   timestamps: true,
 });
 
+// Declare index for createdAt property
+postSchema.index({ createdAt: -1 });
+
 /**
  * @typedef Post
  */
