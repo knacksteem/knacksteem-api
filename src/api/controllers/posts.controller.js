@@ -1,14 +1,32 @@
+const Post = require('../models/post.model');
+
 /**
- * Returns jwt token if valid username and SC2 Object is provided
+ * Insert a new post into database
+ * @author Jayser Mendez
  * @public
  */
 exports.createPost = async (req, res, next) => {
   try {
-    res.send({
-      message: res.locals.username,
+    // Initialize a new object with post data
+    const newPost = new Post({
+      title: req.body.title,
+      description: req.body.description,
+      author: res.locals.username,
+      tags: res.body.tags,
     });
 
-    // If any error, catch it
+    // Insert the post into database.
+    Post.create(newPost);
+
+    res.send({
+      status: 200,
+      message: 'Post created correctly',
+    });
+
+    // Move to the next middleware
+    return next();
+
+  // If any error, catch it
   } catch (error) {
     return next(error);
   }

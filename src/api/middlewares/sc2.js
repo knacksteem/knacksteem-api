@@ -1,6 +1,11 @@
 const sc2 = require('../../config/steemconnect');
 const httpStatus = require('http-status');
 
+/**
+ * SC2 Validator. Validate if the provided access token is valid.
+ * @author Jayser Mendez.
+ * @public
+ */
 const validateSc2 = async (req, res, next) => {
   try {
     // Set the access token to the sc2 instance

@@ -11,7 +11,7 @@ const { env, jwtSecret, jwtExpirationInterval } = require('../../config/vars');
 /**
 * User Roles
 */
-const roles = ['contributor', 'moderator','supervisor'];
+const roles = ['contributor', 'moderator', 'supervisor'];
 
 /**
  * User Schema
@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
     type: Object,
     required: true,
   },
-  //setting default role as contributor
+  // Setting default role as contributor
   role: {
     type: String,
     enum: roles,
@@ -110,7 +110,7 @@ userSchema.statics = {
       let user;
 
       if (username) {
-        user = await this.findOne({'username': username}).exec();
+        user = await this.findOne({ username: username }).exec();
       }
       if (user) {
         return user;
@@ -150,9 +150,9 @@ userSchema.statics = {
       //err.message = 'Incorrect email or password';
     } else if (refreshObject && refreshObject.username === username) {
       return { user, accessToken: user.token() };
-    } else {
+    } 
       err.message = 'Incorrect username or refreshToken';
-    }
+    
     throw new APIError(err);
   },
 
@@ -200,7 +200,7 @@ userSchema.statics = {
   },
 
   async oAuthLogin({
-    service, id, username, 
+    service, id, username,
   }) {
     const user = await this.findOne({ $or: [{ [`services.${service}`]: id }, { username }] });
     if (user) {
