@@ -23,7 +23,7 @@ const userExist = async (req, res, next) => {
       user: res.locals.userObject,
     });
 
-      // Insert the new username in database.
+    // Insert the new username in database.
     User.create(newUser);
 
     // Pass to the next middleware

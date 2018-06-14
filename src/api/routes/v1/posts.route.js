@@ -10,4 +10,6 @@ router.route('/create').post(sc2Middleware, checkUserMiddleware, controller.crea
 
 router.route('/all').get(controller.getAllPosts);
 
+router.route('/byAuthor').get(controller.getPostsByAuthor);
+
 module.exports = router;
