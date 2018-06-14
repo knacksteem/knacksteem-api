@@ -24,10 +24,10 @@ function generateTokenResponse(user, accessToken) {
  */
 exports.login = async (req, res, next) => {
   try {
-    const { user, accessToken } = await User.findAndGenerateToken(req.body);
-    const token = generateTokenResponse(user, accessToken);
-    const userTransformed = user.transform();
-    return res.json({ token, user: userTransformed });
+    // const { user, accessToken } = await User.findAndGenerateToken(req.body);
+    // const token = generateTokenResponse(user, accessToken);
+    // const userTransformed = user.transform();
+    return res.json({ token: 'adadaada' });
   } catch (error) {
     return next(error);
   }
@@ -56,12 +56,12 @@ exports.oAuth = async (req, res, next) => {
  */
 exports.refresh = async (req, res, next) => {
   try {
-    const { usernmae, refreshToken } = req.body;
+    const { username, refreshToken } = req.body;
     const refreshObject = await RefreshToken.findOneAndRemove({
       userName: username,
       token: refreshToken,
     });
-    const { user, accessToken } = await User.findAndGenerateToken({ email, refreshObject });
+    const { user, accessToken } = await User.findAndGenerateToken({ username, refreshObject });
     const response = generateTokenResponse(user, accessToken);
     return res.json(response);
   } catch (error) {
