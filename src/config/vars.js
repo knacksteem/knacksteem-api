@@ -7,6 +7,8 @@ require('dotenv-safe').load({
 });
 
 module.exports = {
+  sc2_app: process.env.SC2_APP || 'steemia.app',
+  sc2_callback: process.env.SC2_CALLBACK || 'http://localhost:3030',
   env: process.env.NODE_ENV,
   port: process.env.PORT,
   jwtSecret: process.env.JWT_SECRET,
