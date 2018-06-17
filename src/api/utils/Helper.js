@@ -1,11 +1,13 @@
 /**
- * Method to validate vote
+ * Method to validate vote. 
  * @param {Number} array 
- * @param {String} username 
+ * @param {String} user 
+ * @description It will return true if the user has voted, otherwise it will return false.
+ * @returns boolean (is voted or not)
  */
-exports.isVoted = (array, username) => {
+exports.isVoted = (array, user) => {
   for (let vote of array) {
-    if (vote.voter === username) {
+    if (vote.voter === user) {
       return true;
     }
   }
