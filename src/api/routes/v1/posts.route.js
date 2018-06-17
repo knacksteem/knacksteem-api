@@ -12,4 +12,6 @@ router.route('/all').get(controller.getAllPosts);
 
 router.route('/byAuthor').get(controller.getPostsByAuthor);
 
+router.route('/:author/:permlink').get(controller.getSinglePost)
+
 module.exports = router;
