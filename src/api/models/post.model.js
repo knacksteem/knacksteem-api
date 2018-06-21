@@ -18,6 +18,24 @@ const postSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
+  moderation: {
+    moderated: {
+      type: Boolean,
+      default: false,
+    },
+    approved: {
+      type: Boolean,
+      default: false,
+    },
+    moderatedBy: {
+      type: String,
+      default: null,
+    },
+    moderatedAt: {
+      type: Date,
+      default: null,
+    },
+  },
 }, {
   timestamps: true,
 });

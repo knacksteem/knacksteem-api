@@ -15,6 +15,8 @@ const router = express.Router();
  *
  * @apiHeader {String} Athorization     SC2 User's access token
  *
+ * @apiParam  {String} permlink         Permlink of the post
+ *
  * @apiSuccess {Number}  status         http status response
  * @apiSuccess {String}  message        http return message
  *
