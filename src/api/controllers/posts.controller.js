@@ -82,6 +82,8 @@ const getPosts = async (res, next, criteria, sort, limit, skip) => {
     });
 
     return true;
+
+  // Catch any possible error
   } catch (err) {
     return err;
   }
