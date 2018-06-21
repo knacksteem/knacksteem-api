@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 /**
  * Post Schema
+ * @author Jayser Mendez
  * @private
  */
 const postSchema = new mongoose.Schema({

@@ -31,56 +31,21 @@ exports.createPost = async (req, res, next) => {
 
 /**
  * Get posts from database based on criteria and sorting.
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
  * @param {Object} criteria: Fields to project from database
  * @param {Object} sort: Sorting strategy
  * @param {Number} limit: how much posts will be pulled
  * @param {Number} skip: how much posts will be skiped (useful for pagination)
  * @author Jayser Mendez
  * @private
- * @returns an array with the posts from database response
+ * @returns an array with the posts from steem API response
  */
-const getPosts = async (criteria, sort, limit, skip) => {
+const getPosts = async (res, next, criteria, sort, limit, skip) => {
   try {
     limit = parseInt(limit, 10);
     skip = parseInt(skip, 10);
     const postsList = await Post.find(criteria).sort(sort).limit(limit || 25).skip(skip || 0);
-    return postsList;
-  } catch (err) {
-    return err;
-  }
-};
-
-/**
- * Create http GET request with 'request' library.
- * @param {String} url: url to call.
- * @param {Function} callback: function to execute after it is done.
- * @author Jayser Mendez.
- * @private
- */
-const httpGet = (url, callback) => {
-  const options = {
-    url,
-    json: true,
-  };
-  request(
-    options,
-    (err, res, body) => {
-      callback(err, body);
-    },
-  );
-};
-
-/**
- * Get all posts from database
- * @author Jayser Mendez
- * @public
- */
-exports.getAllPosts = async (req, res, next) => {
-  try {
-    // Query the posts from database in a descending order.
-    const { limit, skip } = req.query;
-    const sort = { createdAt: -1 };
-    const postsList = await getPosts({}, sort, limit, skip);
 
     // Declare an array to hold the URLS to do the http GET call.
     const urls = [];
@@ -101,6 +66,8 @@ exports.getAllPosts = async (req, res, next) => {
         title: response.title,
         description: response.body,
       };
+
+    // Grab results or catch errors
     }, (err, results) => {
       // If there is any error, send it to the client.
       if (err) return next(err);
@@ -113,6 +80,26 @@ exports.getAllPosts = async (req, res, next) => {
 
       return true;
     });
+
+    return true;
+  } catch (err) {
+    return err;
+  }
+};
+
+/**
+ * Get all posts from database
+ * @author Jayser Mendez
+ * @public
+ */
+exports.getAllPosts = async (req, res, next) => {
+  try {
+    // Query the posts from database in a descending order.
+    const { limit, skip } = req.query;
+    const sort = { createdAt: -1 };
+
+    // eslint-disable-next-line
+    const postsList = await getPosts(res, next, {}, sort, limit, skip);
 
     return true;
 
@@ -131,12 +118,13 @@ exports.getPostsByAuthor = async (req, res, next) => {
   try {
     // Query the posts from database in a descending order.
     const { limit, skip } = req.query;
-    const author = { author: req.query.username };
+    const author = { author: req.query.author };
     const sort = { createdAt: -1 };
-    const postsList = await getPosts(author, sort, limit, skip);
 
-    // Send the posts to the client in a formatted JSON.
-    return res.send(postsList);
+    // eslint-disable-next-line
+    const postsList = await getPosts(res, next, author, sort, limit, skip);
+
+    return true;
 
     // Catch any possible error
   } catch (err) {
