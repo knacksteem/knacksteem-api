@@ -13,12 +13,12 @@ const router = express.Router();
  * @apiGroup Posts
  * @apiPermission user
  *
- * @apiHeader {String} Athorization     SC2 User's access token
+ * @apiHeader {String}   Authorization     SC2 User's access token
  *
- * @apiParam  {String} permlink         Permlink of the post
+ * @apiParam  {String}   permlink          Permlink of the post
  *
- * @apiSuccess {Number}  status         http status response
- * @apiSuccess {String}  message        http return message
+ * @apiSuccess {Number}  status            http status response
+ * @apiSuccess {String}  message           http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated users can create a post
  *

@@ -10,6 +10,7 @@ exports.moderatePost = async (req, res, next) => {
   try {
     // Grab the permlink from the post request
     const { permlink, approved } = req.body;
+
     // Grab the moderator username from the locals
     const moderator = res.locals.username;
 
