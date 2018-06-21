@@ -5,20 +5,13 @@ const mongoose = require('mongoose');
  * @private
  */
 const postSchema = new mongoose.Schema({
-  title: {
+  author: {
     type: String,
     required: true,
     trim: true,
+    lowercase: true,
   },
-  description: {
-    type: String,
-    required: true,
-  },
-  tags: {
-    type: Array,
-    required: false,
-  },
-  author: {
+  permlink: {
     type: String,
     required: true,
     trim: true,

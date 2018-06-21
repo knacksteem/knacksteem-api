@@ -1,4 +1,6 @@
 const Post = require('../models/post.model');
+const async = require('async');
+const request = require('request-promise-native');
 
 /**
  * Insert a new post into database
@@ -9,24 +11,19 @@ exports.createPost = async (req, res, next) => {
   try {
     // Initialize a new object with post data
     const newPost = new Post({
-      title: req.body.title,
-      description: req.body.description,
+      permlink: req.body.permlink,
       author: res.locals.username,
-      tags: req.body.tags || [],
     });
 
     // Insert the post into database.
     Post.create(newPost);
 
-    res.send({
+    return res.send({
       status: 200,
       message: 'Post created correctly',
     });
 
-    // Move to the next middleware
-    return next();
-
-  // If any error, catch it
+    // If any error, catch it
   } catch (error) {
     return next(error);
   }
@@ -47,14 +44,30 @@ const getPosts = async (criteria, sort, limit, skip) => {
     limit = parseInt(limit, 10);
     skip = parseInt(skip, 10);
     const postsList = await Post.find(criteria).sort(sort).limit(limit || 25).skip(skip || 0);
-    return {
-      results: postsList,
-      count: postsList.length,
-      status: 200,
-    };
+    return postsList;
   } catch (err) {
     return err;
   }
+};
+
+/**
+ * Create http GET request with 'request' library.
+ * @param {String} url: url to call.
+ * @param {Function} callback: function to execute after it is done.
+ * @author Jayser Mendez.
+ * @private
+ */
+const httpGet = (url, callback) => {
+  const options = {
+    url,
+    json: true,
+  };
+  request(
+    options,
+    (err, res, body) => {
+      callback(err, body);
+    },
+  );
 };
 
 /**
@@ -69,10 +82,41 @@ exports.getAllPosts = async (req, res, next) => {
     const sort = { createdAt: -1 };
     const postsList = await getPosts({}, sort, limit, skip);
 
-    // Send the posts to the client in a formatted JSON.
-    return res.send(postsList);
+    // Declare an array to hold the URLS to do the http GET call.
+    const urls = [];
 
-  // Catch any possible error
+    // Iterate over the results from the database to generate the urls.
+    postsList.forEach((post) => {
+      urls.push(`https://api.steemjs.com/get_content?author=${post.author}&permlink=${post.permlink}`);
+    });
+
+    // Do all the http calls and grab the results at the end. it will do 15 parallel calls.
+    async.mapLimit(urls, 15, async (url) => {
+      // Fetch the http GET call results
+      const response = await request({ url, json: true });
+
+      // Parse only the fields needed.
+      // TODO: Determine what fields we need
+      return {
+        title: response.title,
+        description: response.body,
+      };
+    }, (err, results) => {
+      // If there is any error, send it to the client.
+      if (err) return next(err);
+
+      // Send the results to the client in a formatted JSON.
+      res.send({
+        results,
+        count: results.length,
+      });
+
+      return true;
+    });
+
+    return true;
+
+    // Catch any possible error
   } catch (err) {
     return next(err);
   }
@@ -94,7 +138,7 @@ exports.getPostsByAuthor = async (req, res, next) => {
     // Send the posts to the client in a formatted JSON.
     return res.send(postsList);
 
-  // Catch any possible error
+    // Catch any possible error
   } catch (err) {
     return next(err);
   }

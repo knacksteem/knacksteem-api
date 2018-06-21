@@ -27,11 +27,9 @@ const userSchema = new mongoose.Schema({
     type: Object,
     required: true,
   },
-  // Setting default role as contributor
-  role: {
-    type: String,
-    enum: roles,
-    default: 'contributor',
+  roles: {
+    type: Array,
+    default: ['contributor'],
   },
 
 }, {
@@ -39,15 +37,9 @@ const userSchema = new mongoose.Schema({
 });
 
 /**
- * Add your
- * - pre-save hooks currently none
- * - validations
- * - virtuals
- */
-
-/**
  * Methods
  */
+
 userSchema.method({
   transform() {
     const transformed = {};
