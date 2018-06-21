@@ -14,7 +14,7 @@ const router = express.Router();
  * @apiGroup Moderators/Supervisors
  * @apiPermission moderators & supervisors
  *
- * @apiHeader {String}   Authorization   SC2 User's access token
+ * @apiHeader {String}   access_token   SC2 User's access token
  *
  * @apiParam  {String}   permlink       Permlink permlink of the post
  * @apiParam  {Boolean}  approved       Whether is the post approved or not

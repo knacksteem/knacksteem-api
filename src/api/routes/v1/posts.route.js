@@ -13,7 +13,7 @@ const router = express.Router();
  * @apiGroup Posts
  * @apiPermission user
  *
- * @apiHeader {String}   Authorization     SC2 User's access token
+ * @apiHeader {String}   access_token      SC2 User's access token
  *
  * @apiParam  {String}   permlink          Permlink of the post
  * TODO: Add validation to the parameters.
