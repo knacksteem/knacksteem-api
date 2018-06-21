@@ -16,13 +16,12 @@ const router = express.Router();
  * @apiHeader {String}   Authorization     SC2 User's access token
  *
  * @apiParam  {String}   permlink          Permlink of the post
+ * TODO: Add validation to the parameters.
  *
  * @apiSuccess {Number}  status            http status response
  * @apiSuccess {String}  message           http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated users can create a post
- *
- * TODO: Add validation to the parameters.
  */
 router.route('/create').post(sc2Middleware, checkUserMiddleware, controller.createPost);
 

@@ -12,11 +12,11 @@ const router = express.Router();
  * @apiVersion 1.0.0
  * @apiName moderatePost
  * @apiGroup Moderators/Supervisors
- * @apiPermission user
+ * @apiPermission moderators & supervisors
  *
  * @apiHeader {String}   Authorization   SC2 User's access token
  *
- * @apiParam  {String}   permlink       Permlink of the post
+ * @apiParam  {String}   permlink       Permlink permlink of the post
  * @apiParam  {Boolean}  approved       Whether is the post approved or not
  *
  * @apiSuccess {Number}  status         http status of the request
