@@ -59,7 +59,6 @@ const constructQuery = (req) => {
 
   // Query with all the options together
   const allConditions = (authorCondition && categoryCondition && searchCondition);
-
   const allQuery = {
     author: req.query.author,
     category: req.query.category,
