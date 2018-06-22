@@ -29,31 +29,22 @@ const router = express.Router();
 router.route('/create').post(validate(create), sc2Middleware, checkUserMiddleware, isBannedMiddleware, controller.createPost);
 
 /**
- * @api {get} v1/posts/all Get All
- * @apiDescription Get all posts from the database
+ * @api {get} v1/posts Get Posts
+ * @apiDescription Get posts from database based on the given query.
  * @apiVersion 1.0.0
- * @apiName getAllPosts
+ * @apiName getPosts
  * @apiGroup Posts
  * @apiPermission All
  *
+ * @apiParam   {String}  author            Author of the post
+ * @apiParam   {String}  category          Category of the post
+ * @apiParam   {Number}  limit             How many post to query
+ * @apiParam   {Number}  skip              How many post to skip in the query
+ *
  * @apiSuccess {String}  title             Title of the post
  * @apiSuccess {String}  description       Description of the post
+ * @apiSuccess {String}  category          Category of the post
  */
-// router.route('/all').get(controller.getAllPosts);
-
 router.route('/').get(controller.getPosts);
-
-/**
- * @api {get} v1/posts/byAuthor Get by Author
- * @apiDescription Get all posts from a specific author from the database.
- * @apiVersion 1.0.0
- * @apiName getPostsByAuthor
- * @apiGroup Posts
- * @apiPermission All
- *
- * @apiSuccess {String}  title             Title of the post
- * @apiSuccess {String}  description       Description of the post
- */
-// router.route('/byAuthor').get(controller.getPostsByAuthor);
 
 module.exports = router;
