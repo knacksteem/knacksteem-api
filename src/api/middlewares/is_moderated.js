@@ -1,5 +1,5 @@
 const httpStatus = require('http-status');
-const ModeratedPost = require('../models/moderated.model');
+const Post = require('../models/post.model');
 
 /**
  * Check if a post is already moderated
@@ -12,13 +12,13 @@ const isBanned = async (req, res, next) => {
     const { permlink } = req.body;
 
     // Ask database if this moderator has moderated this post before
-    const isModerated = await ModeratedPost.findOne({ permlink });
+    const isModerated = await Post.findOne({ permlink });
 
     // If this post is already moderated, prevent the moderator to moderate it again.
-    if (isModerated) {
+    if (isModerated.moderation.moderated === true) {
       return next({
         status: httpStatus.UNAUTHORIZED,
-        message: 'This post is already moderated. Contact a supervisor to change its status.',
+        message: `This post is already moderated by ${isModerated.moderation.moderatedBy}. Contact a supervisor to change its status.`,
       });
     }
 

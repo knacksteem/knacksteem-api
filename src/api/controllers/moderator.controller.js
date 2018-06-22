@@ -1,5 +1,4 @@
 const Post = require('../models/post.model');
-const ModeratedPost = require('../models/moderated.model');
 const httpStatus = require('http-status');
 
 /**
@@ -26,21 +25,8 @@ exports.moderatePost = async (req, res, next) => {
       },
     );
 
-    // Create a new moderated post with the data above.
-    const moderation = new ModeratedPost({
-      moderated: true,
-      approved,
-      moderatedBy: moderator,
-      moderatedAt: +new Date(),
-      permlink,
-      category: post.category,
-    });
-
-    // Insert the new moderated post into its respective collection.
-    const moderatedPost = await ModeratedPost.create(moderation);
-
     // If the post is moderated correctly, send the message to the client.
-    if (post && moderatedPost) {
+    if (post) {
       return res.send({
         status: 200,
         message: 'Post moderated correctly',
