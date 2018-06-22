@@ -38,6 +38,7 @@ router.route('/create').post(validate(create), sc2Middleware, checkUserMiddlewar
  *
  * @apiParam   {String}  author            Author of the post
  * @apiParam   {String}  category          Category of the post
+ * @apiParam   {String}  search            Find posts including this text or similar text
  * @apiParam   {Number}  limit             How many post to query
  * @apiParam   {Number}  skip              How many post to skip in the query
  *
