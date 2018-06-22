@@ -47,6 +47,6 @@ moderatedSchema.index({ createdAt: -1 });
 moderatedSchema.index({ moderatedBy: 1, approved: 1, permlink: 1 });
 
 /**
- * @typedef Post
+ * @typedef ModeratedPost
  */
 module.exports = mongoose.model('ModeratedPost', moderatedSchema);
