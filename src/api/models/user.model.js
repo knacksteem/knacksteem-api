@@ -23,10 +23,6 @@ const userSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
-  user: {
-    type: Object,
-    required: true,
-  },
   roles: {
     type: Array,
     default: ['contributor'],

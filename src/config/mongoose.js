@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const { mongo, env } = require('./vars');
 const User = require('../api/models/user.model');
-const request = require('request-promise-native');
 const config = require('./vars');
 
 // set mongoose Promise to Bluebird
@@ -18,22 +17,27 @@ if (env === 'development') {
   mongoose.set('debug', true);
 }
 
+/**
+ * Method to inser the master user in the database.
+ * @param {String} username: Username of the master user
+ * @private
+ * @author Jayser Mendez.
+ */
 const createMasterUser = async (username) => {
-  // Define the url to grab the user data
-  const api = `https://api.steemjs.com/get_accounts?names[]=%5B%22${username}%22%5D`;
+  try {
+    // Create a new user object with the required data.
+    const newUser = new User({
+      username,
+      roles: ['supervisor', 'moderator', 'contributor'],
+    });
 
-  // Make a http GET call to Steem API.
-  const user = await request(api, { json: true });
+    // Insert the new username in database.
+    return await User.create(newUser);
 
-  // Create a new user object with the required data.
-  const newUser = new User({
-    username,
-    user,
-    roles: ['supervisor', 'moderator', 'contributor'],
-  });
-
-  // Insert the new username in database.
-  await User.create(newUser);
+  // Return just false if any error
+  } catch (err) {
+    return false;
+  }
 };
 
 /**

@@ -24,7 +24,6 @@ const userExist = async (req, res, next) => {
     // Create a new user object with the required data.
     const newUser = new User({
       username: res.locals.username,
-      user: res.locals.userObject,
     });
 
     // Insert the new username in database.
