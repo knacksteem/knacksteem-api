@@ -41,21 +41,42 @@ const constructQuery = (req) => {
   /**
    * Ternary conditions to decide which query to load.
    */
+
+  // Query to get posts by author
   const authorCondition = (req.query.author);
   const authorQuery = { author: req.query.author };
+
+  // Query to get posts by category
   const categoryCondition = (req.query.category);
   const categoryQuery = { category: req.query.category };
-  const bothConditions = (authorCondition && categoryCondition);
-  const bothQuery = { author: req.query.author, category: req.query.category };
+
+  // Query for full text search using title and description fields.
+  const searchCondition = (req.query.search);
+  const searchQuery = {
+    $or: [{ title: { $regex: req.query.search, $options: 'i' } },
+      { permlink: { $regex: req.query.search, $options: 'i' } }],
+  };
+
+  // Query with all the options together
+  const allConditions = (authorCondition && categoryCondition && searchCondition);
+
+  const allQuery = {
+    author: req.query.author,
+    category: req.query.category,
+    $or: [{ category: { $regex: req.query.search, $options: 'i' } },
+      { permlink: { $regex: req.query.search, $options: 'i' } }],
+  };
 
   /**
-   * If the author and category are present in the query, query by author and category.
+   * If the author,category, and search are present in the query, query by author and category
+   * using full text search.
    * Else if the author is present in the query, query the posts by author.
    * Else if the category is present in the query, query the posts by category.
+   * Else if the search is present in the query, do a full text search
    * Else, query all posts
    */
   // eslint-disable-next-line
-  return bothConditions ? bothQuery : (authorCondition ? authorQuery : (categoryCondition ? categoryQuery : {}));
+  return allConditions ? allQuery : (authorCondition ? authorQuery : (categoryCondition ? categoryQuery : (searchCondition ? searchQuery : {})));
 };
 
 /**
