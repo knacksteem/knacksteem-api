@@ -2,27 +2,39 @@ const mongoose = require('mongoose');
 
 /**
  * Post Schema
+ * @author Jayser Mendez
  * @private
  */
 const postSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  tags: {
-    type: Array,
-    required: false,
-  },
   author: {
     type: String,
     required: true,
     trim: true,
     lowercase: true,
+  },
+  permlink: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+  },
+  moderation: {
+    moderated: {
+      type: Boolean,
+      default: false,
+    },
+    approved: {
+      type: Boolean,
+      default: false,
+    },
+    moderatedBy: {
+      type: String,
+      default: null,
+    },
+    moderatedAt: {
+      type: Date,
+      default: null,
+    },
   },
 }, {
   timestamps: true,

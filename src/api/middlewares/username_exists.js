@@ -29,7 +29,6 @@ const userExist = async (req, res, next) => {
     // Pass to the next middleware
     return next();
 
-
   // Catch any possible error.
   } catch (err) {
     // Catch errors here.
