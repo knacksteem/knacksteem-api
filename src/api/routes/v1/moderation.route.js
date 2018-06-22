@@ -1,10 +1,12 @@
 const express = require('express');
+const validate = require('express-validation');
 const controller = require('../../controllers/moderation.controller');
 const sc2Middleware = require('../../middlewares/sc2');
 const checkUserMiddleware = require('../../middlewares/username_exists');
 const checkModeratorMiddleware = require('../../middlewares/is_moderator');
 const isModeratedMiddleware = require('../../middlewares/is_moderated');
 const checkSupervisorMiddleware = require('../../middlewares/is_supervisor');
+const { ban } = require('../../validations/moderation.validation');
 
 const router = express.Router();
 
@@ -49,6 +51,6 @@ router.route('/moderate').post(sc2Middleware, checkUserMiddleware, checkModerato
  * @apiError (Unauthorized 401) Unauthorized Only authenticated supervisors can ban a user.
  * @apiError (Unauthorized 404) User cannot be found in database.
  */
-router.route('/ban').post(sc2Middleware, checkUserMiddleware, checkSupervisorMiddleware, controller.banUser);
+router.route('/ban').post(validate(ban), sc2Middleware, checkUserMiddleware, checkSupervisorMiddleware, controller.banUser);
 
 module.exports = router;

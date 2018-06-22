@@ -47,7 +47,7 @@ exports.moderatePost = async (req, res, next) => {
 };
 
 /**
- * Method to ban a user
+ * Method to ban a user (Only for supervisors)
  * @public
  * @author Jayser Mendez
  */

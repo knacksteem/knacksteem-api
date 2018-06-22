@@ -4,7 +4,7 @@ const controller = require('../../controllers/posts.controller');
 const sc2Middleware = require('../../middlewares/sc2');
 const checkUserMiddleware = require('../../middlewares/username_exists');
 const isBannedMiddleware = require('../../middlewares/is_banned');
-const { create } = require('../../validations/post.validations');
+const { create } = require('../../validations/post.validation');
 
 const router = express.Router();
 
