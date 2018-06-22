@@ -39,7 +39,9 @@ router.route('/create').post(validate(create), sc2Middleware, checkUserMiddlewar
  * @apiSuccess {String}  title             Title of the post
  * @apiSuccess {String}  description       Description of the post
  */
-router.route('/all').get(controller.getAllPosts);
+// router.route('/all').get(controller.getAllPosts);
+
+router.route('/').get(controller.getPosts);
 
 /**
  * @api {get} v1/posts/byAuthor Get by Author
@@ -52,6 +54,6 @@ router.route('/all').get(controller.getAllPosts);
  * @apiSuccess {String}  title             Title of the post
  * @apiSuccess {String}  description       Description of the post
  */
-router.route('/byAuthor').get(controller.getPostsByAuthor);
+// router.route('/byAuthor').get(controller.getPostsByAuthor);
 
 module.exports = router;
