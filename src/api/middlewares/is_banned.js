@@ -12,14 +12,13 @@ const isBanned = async (req, res, next) => {
 
     // If the user is found, check if the user is banned and ban is not expired
     if (user) {
-      if (user.isBanned === true && new Date(user.bannedUntil).getTime() < Date.now()) {
+      if (user.isBanned === true && Date.now() < user.bannedUntil) {
+        console.log(Date.now(), user.bannedUntil);
         // Deny access if the user is banned
         return next({
           status: httpStatus.UNAUTHORIZED,
           message: 'Unauthorized access. You have been banned!',
           reason: user.banReason,
-          expiration: new Date(user.bannedUntil).toLocaleDateString('en-US'),
-          bannedBy: user.bannedBy,
         });
       }
 

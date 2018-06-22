@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
   bannedUntil: {
-    type: Date,
+    type: Number,
     default: null,
   },
   banReason: {
