@@ -7,7 +7,7 @@ const httpStatus = require('http-status');
  */
 const isBanned = async (req, res, next) => {
   try {
-    // Try to find the username in database.
+    // grab the user object from the last middleware which was store in the locals.
     const { user } = res.locals;
 
     // If the user is found, check if the user is banned and ban is not expired
