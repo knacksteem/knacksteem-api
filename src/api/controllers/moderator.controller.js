@@ -15,17 +15,6 @@ exports.moderatePost = async (req, res, next) => {
     // Grab the moderator username from the locals
     const moderator = res.locals.username;
 
-    // Ask database if this moderator has moderated this post before
-    const isModerated = await ModeratedPost.findOne({ permlink, moderatedBy: moderator });
-
-    // If this post is already moderated, prevent the moderator to moderate it again.
-    if (isModerated) {
-      return res.send({
-        status: httpStatus.UNAUTHORIZED,
-        message: 'You\'ve already moderated this post. Contact a supervisor to change its status.',
-      });
-    }
-
     // Update the post with the new moderation data
     const post = await Post.findOneAndUpdate(
       { permlink },

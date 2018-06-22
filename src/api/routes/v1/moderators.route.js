@@ -3,6 +3,7 @@ const controller = require('../../controllers/moderator.controller');
 const sc2Middleware = require('../../middlewares/sc2');
 const checkUserMiddleware = require('../../middlewares/username_exists');
 const checkModeratorMiddleware = require('../../middlewares/is_moderator');
+const isModeratedMiddleware = require('../../middlewares/is_moderated');
 
 const router = express.Router();
 
@@ -25,6 +26,6 @@ const router = express.Router();
  * @apiError (Unauthorized 401) Unauthorized Only authenticated moderators can update a post.
  * @apiError (Unauthorized 404) Permlink of the post cannot be found in the database.
  */
-router.route('/moderate').post(sc2Middleware, checkUserMiddleware, checkModeratorMiddleware, controller.moderatePost);
+router.route('/moderate').post(sc2Middleware, checkUserMiddleware, checkModeratorMiddleware, isModeratedMiddleware, controller.moderatePost);
 
 module.exports = router;
