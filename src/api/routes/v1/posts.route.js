@@ -26,7 +26,13 @@ const router = express.Router();
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated users can create a post
  */
-router.route('/create').post(validate(create), sc2Middleware, checkUserMiddleware, isBannedMiddleware, controller.createPost);
+router.route('/create').post(
+  validate(create),
+  sc2Middleware,
+  checkUserMiddleware,
+  isBannedMiddleware,
+  controller.createPost,
+);
 
 /**
  * @api {get} v1/posts Get Posts

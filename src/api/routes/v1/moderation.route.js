@@ -6,7 +6,7 @@ const checkUserMiddleware = require('../../middlewares/username_exists');
 const checkModeratorMiddleware = require('../../middlewares/is_moderator');
 const isModeratedMiddleware = require('../../middlewares/is_moderated');
 const checkSupervisorMiddleware = require('../../middlewares/is_supervisor');
-const { ban } = require('../../validations/moderation.validation');
+const { ban, moderate } = require('../../validations/moderation.validation');
 
 const router = express.Router();
 
@@ -29,7 +29,14 @@ const router = express.Router();
  * @apiError (Unauthorized 401) Unauthorized Only authenticated moderators can update a post.
  * @apiError (Unauthorized 404) Permlink of the post cannot be found in the database.
  */
-router.route('/moderate').post(sc2Middleware, checkUserMiddleware, checkModeratorMiddleware, isModeratedMiddleware, controller.moderatePost);
+router.route('/moderate').post(
+  validate(moderate),
+  sc2Middleware,
+  checkUserMiddleware,
+  checkModeratorMiddleware,
+  isModeratedMiddleware,
+  controller.moderatePost,
+);
 
 /**
  * @api {post} v1/moderation/ban Ban a User
@@ -51,6 +58,12 @@ router.route('/moderate').post(sc2Middleware, checkUserMiddleware, checkModerato
  * @apiError (Unauthorized 401) Unauthorized Only authenticated supervisors can ban a user.
  * @apiError (Unauthorized 404) User cannot be found in database.
  */
-router.route('/ban').post(validate(ban), sc2Middleware, checkUserMiddleware, checkSupervisorMiddleware, controller.banUser);
+router.route('/ban').post(
+  validate(ban),
+  sc2Middleware,
+  checkUserMiddleware,
+  checkSupervisorMiddleware,
+  controller.banUser,
+);
 
 module.exports = router;
