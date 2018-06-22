@@ -3,7 +3,6 @@ const userRoutes = require('./user.route');
 const authRoutes = require('./auth.route');
 const postsRoutes = require('./posts.route');
 const moderationRoutes = require('./moderation.route');
-const supervisorRoutes = require('./supervisors.route');
 
 const router = express.Router();
 
@@ -21,6 +20,5 @@ router.use('/users', userRoutes);
 router.use('/auth', authRoutes);
 router.use('/posts', postsRoutes);
 router.use('/moderation', moderationRoutes);
-router.use('/supervisors', supervisorRoutes);
 
 module.exports = router;
