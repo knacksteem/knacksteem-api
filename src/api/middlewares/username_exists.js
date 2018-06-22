@@ -13,6 +13,10 @@ const userExist = async (req, res, next) => {
 
     // If the username is the same as the one from locals, pass to next middleware.
     if (user) {
+      // Make a global reference of the user object
+      res.locals.user = user;
+
+      // Move to the next middleware
       return next();
     }
 
@@ -24,9 +28,12 @@ const userExist = async (req, res, next) => {
     });
 
     // Insert the new username in database.
-    User.create(newUser);
+    const tempUser = await User.create(newUser);
 
-    // Pass to the next middleware
+    // Make a global reference of the user object
+    res.locals.user = tempUser;
+
+    // Move to the next middleware
     return next();
 
   // Catch any possible error.

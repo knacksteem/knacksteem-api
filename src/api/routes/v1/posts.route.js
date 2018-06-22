@@ -2,6 +2,7 @@ const express = require('express');
 const controller = require('../../controllers/posts.controller');
 const sc2Middleware = require('../../middlewares/sc2');
 const checkUserMiddleware = require('../../middlewares/username_exists');
+const isBannedMiddleware = require('../../middlewares/is_banned');
 
 const router = express.Router();
 
@@ -23,7 +24,7 @@ const router = express.Router();
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated users can create a post
  */
-router.route('/create').post(sc2Middleware, checkUserMiddleware, controller.createPost);
+router.route('/create').post(sc2Middleware, checkUserMiddleware, isBannedMiddleware, controller.createPost);
 
 /**
  * @api {get} v1/posts/all Get All

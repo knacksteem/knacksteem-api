@@ -18,6 +18,12 @@ const postSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
+  category: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+  },
   moderation: {
     moderated: {
       type: Boolean,

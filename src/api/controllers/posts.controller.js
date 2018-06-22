@@ -13,6 +13,7 @@ exports.createPost = async (req, res, next) => {
     const newPost = new Post({
       permlink: req.body.permlink,
       author: res.locals.username,
+      category: req.body.category,
     });
 
     // Insert the post into database.
