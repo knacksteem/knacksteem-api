@@ -72,11 +72,15 @@ exports.getPosts = async (req, res, next) => {
     async.mapLimit(urls, 15, async (url) => {
       // Fetch the http GET call results
       const response = await request({ url, json: true });
+
       let isVoted = false;
 
+      // Check if there is a user provided in the params.
+      // If so, determine if this user has voted the post.
       if (username) {
         isVoted = helper.isVoted(response.active_votes, username);
       }
+
       // Parse only the fields needed.
       // TODO: Determine what fields we need
       return {

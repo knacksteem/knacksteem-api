@@ -9,4 +9,13 @@ module.exports = {
       category: Joi.string().required().max(25),
     },
   },
+
+  // GET /v1/posts/:author/:permlink
+  single: {
+    params: {
+      author: Joi.string().required(),
+      permlink: Joi.string().required(),
+      username: Joi.string(),
+    },
+  },
 };

@@ -4,7 +4,7 @@ const controller = require('../../controllers/posts.controller');
 const sc2Middleware = require('../../middlewares/sc2');
 const checkUserMiddleware = require('../../middlewares/username_exists');
 const isBannedMiddleware = require('../../middlewares/is_banned');
-const { create } = require('../../validations/post.validation');
+const { create, single } = require('../../validations/post.validation');
 
 const router = express.Router();
 
@@ -71,6 +71,6 @@ router.route('/').get(controller.getPosts);
  * @apiSuccess {String}   category          Category of the post
  * @apiSuccess {Boolean}  isVoted           Is the post voted by the provided user
  */
-router.route('/:author/:permlink').get(controller.getSinglePost);
+router.route('/:author/:permlink').get(validate(single), controller.getSinglePost);
 
 module.exports = router;
