@@ -6,7 +6,7 @@ const Post = require('../models/post.model');
  * @author Jayser Mendez.
  * @public
  */
-const isBanned = async (req, res, next) => {
+const isPostModerated = async (req, res, next) => {
   try {
     // Grab the permlink from the post request
     const { permlink } = req.body;
@@ -36,4 +36,4 @@ const isBanned = async (req, res, next) => {
   }
 };
 
-module.exports = isBanned;
+module.exports = isPostModerated;
