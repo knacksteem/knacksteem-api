@@ -21,7 +21,7 @@ exports.createPost = async (req, res, next) => {
     });
 
     // Insert the post into database.
-    Post.create(newPost);
+    await Post.create(newPost);
 
     return res.send({
       status: 200,
