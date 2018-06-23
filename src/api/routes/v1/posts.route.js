@@ -54,4 +54,6 @@ router.route('/create').post(
  */
 router.route('/').get(controller.getPosts);
 
+router.route('/:author/:permlink').get(controller.getSinglePost)
+
 module.exports = router;
