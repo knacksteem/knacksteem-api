@@ -56,6 +56,21 @@ router.route('/create').post(
  */
 router.route('/').get(controller.getPosts);
 
+/**
+ * @api {get} v1/posts/:author/:permlink Get Post Single
+ * @apiDescription Get post single data
+ * @apiVersion 1.0.0
+ * @apiName getSinglePost
+ * @apiGroup Posts
+ * @apiPermission All
+ *
+ * @apiParam   {String}   username          username of the current logged in user
+ *
+ * @apiSuccess {String}   title             Title of the post
+ * @apiSuccess {String}   description       Description of the post
+ * @apiSuccess {String}   category          Category of the post
+ * @apiSuccess {Boolean}  isVoted           Is the post voted by the provided user
+ */
 router.route('/:author/:permlink').get(controller.getSinglePost);
 
 module.exports = router;
