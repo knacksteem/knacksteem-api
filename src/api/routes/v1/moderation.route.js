@@ -15,7 +15,7 @@ const router = express.Router();
  * @apiDescription Update a post with the moderation data
  * @apiVersion 1.0.0
  * @apiName moderatePost
- * @apiGroup Moderators/Supervisors
+ * @apiGroup Moderation Tools
  * @apiPermission moderators & supervisors
  *
  * @apiHeader {String}   access_token   SC2 User's access token
@@ -43,7 +43,7 @@ router.route('/moderate').post(
  * @apiDescription Ban a user
  * @apiVersion 1.0.0
  * @apiName banUser
- * @apiGroup Supervisors
+ * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
  * @apiHeader {String}   access_token   SC2 User's access token
