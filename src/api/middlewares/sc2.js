@@ -17,9 +17,6 @@ const validateSc2 = async (req, res, next) => {
     // Declare a local variable with the username.
     res.locals.username = sc2Res.user;
 
-    // Declare a local variable with the user object.
-    res.locals.userObject = sc2Res;
-
     // Move to the next middleware and pass username along.
     return next();
 

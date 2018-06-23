@@ -18,6 +18,12 @@ const postSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
+  category: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+  },
   moderation: {
     moderated: {
       type: Boolean,
@@ -40,8 +46,11 @@ const postSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-// Declare index for createdAt property
+// Declare index for createdAt property.
 postSchema.index({ createdAt: -1 });
+
+// Declare index for author and category.
+postSchema.index({ author: 1, category: 1 });
 
 /**
  * @typedef Post

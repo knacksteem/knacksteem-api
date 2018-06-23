@@ -23,17 +23,25 @@ const userSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
-  user: {
-    type: Object,
-    required: true,
-  },
   roles: {
     type: Array,
     default: ['contributor'],
   },
-  is_banned: {
+  isBanned: {
     type: Boolean,
     default: false,
+  },
+  bannedUntil: {
+    type: Number,
+    default: null,
+  },
+  banReason: {
+    type: String,
+    default: null,
+  },
+  bannedBy: {
+    type: String,
+    default: null,
   },
 }, {
   timestamps: true,

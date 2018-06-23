@@ -1,7 +1,10 @@
 const express = require('express');
+const validate = require('express-validation');
 const controller = require('../../controllers/posts.controller');
 const sc2Middleware = require('../../middlewares/sc2');
 const checkUserMiddleware = require('../../middlewares/username_exists');
+const isBannedMiddleware = require('../../middlewares/is_banned');
+const { create } = require('../../validations/post.validation');
 
 const router = express.Router();
 
@@ -13,7 +16,7 @@ const router = express.Router();
  * @apiGroup Posts
  * @apiPermission user
  *
- * @apiHeader {String}   Authorization     SC2 User's access token
+ * @apiHeader {String}   access_token      SC2 User's access token
  *
  * @apiParam  {String}   permlink          Permlink of the post
  * TODO: Add validation to the parameters.
@@ -23,33 +26,33 @@ const router = express.Router();
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated users can create a post
  */
-router.route('/create').post(sc2Middleware, checkUserMiddleware, controller.createPost);
+router.route('/create').post(
+  validate(create),
+  sc2Middleware,
+  checkUserMiddleware,
+  isBannedMiddleware,
+  controller.createPost,
+);
 
 /**
- * @api {get} v1/posts/all Get All
- * @apiDescription Get all posts from the database
+ * @api {get} v1/posts Get Posts
+ * @apiDescription Get posts from database based on the given query.
  * @apiVersion 1.0.0
- * @apiName getAllPosts
+ * @apiName getPosts
  * @apiGroup Posts
  * @apiPermission All
  *
- * @apiSuccess {String}  title             Title of the post
- * @apiSuccess {String}  description       Description of the post
- */
-router.route('/all').get(controller.getAllPosts);
-
-/**
- * @api {get} v1/posts/byAuthor Get by Author
- * @apiDescription Get all posts from a specific author from the database.
- * @apiVersion 1.0.0
- * @apiName getPostsByAuthor
- * @apiGroup Posts
- * @apiPermission All
+ * @apiParam   {String}  author            Author of the post
+ * @apiParam   {String}  category          Category of the post
+ * @apiParam   {String}  search            Find posts including this text or similar text
+ * @apiParam   {Number}  limit             How many post to query
+ * @apiParam   {Number}  skip              How many post to skip in the query
  *
  * @apiSuccess {String}  title             Title of the post
  * @apiSuccess {String}  description       Description of the post
+ * @apiSuccess {String}  category          Category of the post
  */
-router.route('/byAuthor').get(controller.getPostsByAuthor);
+router.route('/').get(controller.getPosts);
 
 router.route('/:author/:permlink').get(controller.getSinglePost)
 
