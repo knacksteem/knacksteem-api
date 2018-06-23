@@ -42,18 +42,20 @@ router.route('/create').post(
  * @apiGroup Posts
  * @apiPermission All
  *
- * @apiParam   {String}  author            Author of the post
- * @apiParam   {String}  category          Category of the post
- * @apiParam   {String}  search            Find posts including this text or similar text
- * @apiParam   {Number}  limit             How many post to query
- * @apiParam   {Number}  skip              How many post to skip in the query
+ * @apiParam   {String}   author            Author of the post
+ * @apiParam   {String}   category          Category of the post
+ * @apiParam   {String}   search            Find posts including this text or similar text
+ * @apiParam   {Number}   limit             How many post to query
+ * @apiParam   {Number}   skip              How many post to skip in the query
+ * @apiParam   {String}   username          Check if this user has vote this post
  *
- * @apiSuccess {String}  title             Title of the post
- * @apiSuccess {String}  description       Description of the post
- * @apiSuccess {String}  category          Category of the post
+ * @apiSuccess {String}   title             Title of the post
+ * @apiSuccess {String}   description       Description of the post
+ * @apiSuccess {String}   category          Category of the post
+ * @apiSuccess {Boolean}  isVoted           Is the post voted by the provided user
  */
 router.route('/').get(controller.getPosts);
 
-router.route('/:author/:permlink').get(controller.getSinglePost)
+router.route('/:author/:permlink').get(controller.getSinglePost);
 
 module.exports = router;

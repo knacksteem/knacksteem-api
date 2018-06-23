@@ -1,7 +1,8 @@
+// eslint-disable-next-line
 const createClient = require('lightrpc').createClient;
 
 const options = {
-    timeout: 15000,
+  timeout: 15000,
 };
 
 const client = createClient('https://api.steemit.com', options);
