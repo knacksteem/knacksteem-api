@@ -3,23 +3,23 @@ const User = require('../models/user.model');
 const httpStatus = require('http-status');
 
 /**
- * Check if the current user is a moderator
+ * Check the role of the current user
  * @author Jayser Mendez.
  * @public
  */
-const isModerator = async (req, res, next) => {
+const checkRole = async (role, req, res, next) => {
   try {
     // Try to find the username in database.
     const user = await User.findOne({ username: res.locals.username });
 
-    // If the user is found, check if the user has a moderator role.
+    // If the user is found, check if the user indicated role.
     if (user) {
-      if (user.roles.indexOf('moderator') > -1) {
-        // Pass to the next middleware if the user is a moderator
+      if (user.roles.indexOf(role) > -1) {
+        // Pass to the next middleware if the indicated role is present in this user.
         return next();
       }
 
-      // If the user is not a moderator, return an error in the middleware
+      // If the user has not the indicated role, return an error in the middleware
       return next({
         status: httpStatus.UNAUTHORIZED,
         message: 'Unauthorized access',
@@ -43,4 +43,4 @@ const isModerator = async (req, res, next) => {
   }
 };
 
-module.exports = isModerator;
+module.exports = checkRole;
