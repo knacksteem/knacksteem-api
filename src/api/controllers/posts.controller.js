@@ -21,7 +21,7 @@ exports.createPost = async (req, res, next) => {
     });
 
     // Insert the post into database.
-    Post.create(newPost);
+    await Post.create(newPost);
 
     return res.send({
       status: 200,
@@ -31,67 +31,6 @@ exports.createPost = async (req, res, next) => {
     // If any error, catch it
   } catch (error) {
     return next(error);
-  }
-};
-
-/**
- * Get posts from database based on criteria and sorting.
- * @param {Object} req: url params
- * @param {Function} res: Express.js response callback
- * @param {Function} next: Express.js middleware callback
- * @param {Object} criteria: Fields to project from database
- * @param {Object} sort: Sorting strategy
- * @param {Number} limit: how much posts will be pulled
- * @param {Number} skip: how much posts will be skiped (useful for pagination)
- * @author Jayser Mendez
- * @private
- * @returns an array with the posts from steem API response
- */
-const getPosts = async (res, next, criteria, sort, limit, skip) => {
-  try {
-    limit = parseInt(limit, 10);
-    skip = parseInt(skip, 10);
-    const postsList = await Post.find(criteria).sort(sort).limit(limit || 25).skip(skip || 0);
-
-    // Declare an array to hold the URLS to do the http GET call.
-    const urls = [];
-
-    // Iterate over the results from the database to generate the urls.
-    postsList.forEach((post) => {
-      urls.push(`https://api.steemjs.com/get_content?author=${post.author}&permlink=${post.permlink}`);
-    });
-
-    // Do all the http calls and grab the results at the end. it will do 15 parallel calls.
-    async.mapLimit(urls, 15, async (url) => {
-      // Fetch the http GET call results
-      const response = await request({ url, json: true });
-
-      // Parse only the fields needed.
-      // TODO: Determine what fields we need
-      return {
-        title: response.title,
-        description: response.body,
-      };
-
-    // Grab results or catch errors
-    }, (err, results) => {
-      // If there is any error, send it to the client.
-      if (err) return next(err);
-
-      // Send the results to the client in a formatted JSON.
-      res.send({
-        results,
-        count: results.length,
-      });
-
-      return true;
-    });
-
-    return true;
-
-  // Catch any possible error
-  } catch (err) {
-    return err;
   }
 };
 

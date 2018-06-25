@@ -3,9 +3,8 @@ const validate = require('express-validation');
 const controller = require('../../controllers/moderation.controller');
 const sc2Middleware = require('../../middlewares/sc2');
 const checkUserMiddleware = require('../../middlewares/username_exists');
-const checkModeratorMiddleware = require('../../middlewares/is_moderator');
 const isModeratedMiddleware = require('../../middlewares/is_moderated');
-const checkSupervisorMiddleware = require('../../middlewares/is_supervisor');
+const checkRoleMiddleware = require('../../middlewares/check_role');
 const { ban, moderate } = require('../../validations/moderation.validation');
 
 const router = express.Router();
@@ -33,7 +32,7 @@ router.route('/moderate').post(
   validate(moderate),
   sc2Middleware,
   checkUserMiddleware,
-  checkModeratorMiddleware,
+  checkRoleMiddleware('moderator'),
   isModeratedMiddleware,
   controller.moderatePost,
 );
@@ -62,7 +61,7 @@ router.route('/ban').post(
   validate(ban),
   sc2Middleware,
   checkUserMiddleware,
-  checkSupervisorMiddleware,
+  checkRoleMiddleware('supervisor'),
   controller.banUser,
 );
 
