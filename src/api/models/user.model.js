@@ -47,6 +47,13 @@ const userSchema = new mongoose.Schema({
   timestamps: true,
 });
 
+// Declare index in user schema for faster query.
+userSchema.index({
+  isBanned: 1,
+  bannedBy: 1,
+  roles: 1,
+}, { name: 'user_index' });
+
 /**
  * Methods
  */

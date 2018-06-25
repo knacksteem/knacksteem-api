@@ -22,6 +22,9 @@ const isPostModerated = async (req, res, next) => {
       });
     }
 
+    // Expose the post object to the next middleware
+    res.locals.post = post;
+
     // If the post is not moderated, move to the next middleware
     return next();
 

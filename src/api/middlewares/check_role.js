@@ -1,5 +1,3 @@
-
-const User = require('../models/user.model');
 const httpStatus = require('http-status');
 
 /**
@@ -11,8 +9,8 @@ const httpStatus = require('http-status');
 const checkRole = (role) => {
   return async (req, res, next) => {
     try {
-      // Try to find the username in database.
-      const user = await User.findOne({ username: res.locals.username });
+      // Grab the user object from the checkUser middleware.
+      const { user } = res.locals;
 
       // If the user is found, check if the user indicated role.
       if (user) {

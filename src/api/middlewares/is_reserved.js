@@ -23,6 +23,9 @@ const isPostReserved = async (req, res, next) => {
       });
     }
 
+    // Since the post is found and it is not reserved, pass it to the next middleware.
+    res.locals.post = post;
+
     // If the post is not reserved, move to the next middleware.
     return next();
 

@@ -1,4 +1,3 @@
-const Post = require('../models/post.model');
 const httpStatus = require('http-status');
 const User = require('../models/user.model');
 
@@ -10,34 +9,34 @@ const User = require('../models/user.model');
 exports.moderatePost = async (req, res, next) => {
   try {
     // Grab the permlink from the post request
-    const { permlink, approved } = req.body;
+    const { approved } = req.body;
 
     // Grab the moderator username from the locals
     const moderator = res.locals.username;
 
-    // Update the post with the new moderation data
-    const post = await Post.findOneAndUpdate(
-      { permlink },
-      {
-        'moderation.moderated': true,
-        'moderation.approved': approved,
-        'moderation.moderatedBy': moderator,
-        'moderation.moderatedAt': +new Date(),
-      },
-    );
+    // Grab the post from the locals
+    const { post } = res.locals;
 
-    // If the post is moderated correctly, send the message to the client.
-    if (post) {
+    // If the post is not found, tell the client.
+    if (!post) {
       return res.send({
-        status: 200,
-        message: 'Post moderated correctly',
+        status: httpStatus.NOT_FOUND,
+        message: 'Post not found',
       });
     }
 
-    // If the post is not found, tell the client.
+    // Update the post with the moderation data
+    await post.update({
+      'moderation.moderated': true,
+      'moderation.approved': approved,
+      'moderation.moderatedBy': moderator,
+      'moderation.moderatedAt': +new Date(),
+    });
+
+    // If the post is moderated correctly, send the message to the client.
     return res.send({
-      status: httpStatus.NOT_FOUND,
-      message: 'Post not found',
+      status: 200,
+      message: 'Post moderated correctly',
     });
 
     // Catch any error
@@ -107,28 +106,25 @@ exports.banUser = async (req, res, next) => {
  */
 exports.reservePost = async (req, res, next) => {
   try {
-    // Grab the permlink from the body of the POST request.
-    const { permlink } = req.body;
-
     // Get the moderator username from the last middleware.
     const moderator = res.locals.username;
+
+    // Grab the post from the locals
+    const { post } = res.locals;
 
     // Set a temp date with the current date
     const d1 = new Date();
     // Initialize another new date
-    const d2 = new Date(d1);
+    const reservedUntil = new Date(d1);
     // Add one hour to the second date using the first date.
-    d2.setHours(d1.getHours() + 1);
+    reservedUntil.setHours(d1.getHours() + 1);
 
-    // Try to find and update the post with the reservation data.
-    const post = await Post.findOneAndUpdate(
-      { permlink },
-      {
-        'moderation.reserved': true, // Can be voided if the reservedUntil is expired
-        'moderation.reservedBy': moderator,
-        'moderation.reservedUntil': d2, // Only 1 hour
-      },
-    );
+    // Update the post with the reservation data
+    await post.update({
+      'moderation.reserved': true, // Can be voided if the reservedUntil is expired
+      'moderation.reservedBy': moderator,
+      'moderation.reservedUntil': reservedUntil, // Only 1 hour
+    });
 
     // If the post is returned, it means that it was edited correctly. Let the client know it.
     if (post) {
