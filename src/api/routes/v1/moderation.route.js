@@ -5,7 +5,8 @@ const sc2Middleware = require('../../middlewares/sc2');
 const checkUserMiddleware = require('../../middlewares/username_exists');
 const isModeratedMiddleware = require('../../middlewares/is_moderated');
 const checkRoleMiddleware = require('../../middlewares/check_role');
-const { ban, moderate } = require('../../validations/moderation.validation');
+const isReservedMiddleware = require('../../middlewares/is_reserved');
+const { ban, moderate, reserve } = require('../../validations/moderation.validation');
 
 const router = express.Router();
 
@@ -35,6 +36,33 @@ router.route('/moderate').post(
   checkRoleMiddleware('moderator'),
   isModeratedMiddleware,
   controller.moderatePost,
+);
+
+/**
+ * @api {post} v1/moderation/reserve Reserve a Post
+ * @apiDescription Reserve a post for moderation
+ * @apiVersion 1.0.0
+ * @apiName reservePost
+ * @apiGroup Moderation Tools
+ * @apiPermission moderators & supervisors
+ *
+ * @apiHeader {String}   access_token   SC2 User's access token
+ *
+ * @apiParam  {String}   permlink       Permlink permlink of the post
+ *
+ * @apiSuccess {Number}  status         http status of the request
+ * @apiSuccess {String}  message        http return message
+ *
+ * @apiError (Unauthorized 401) Unauthorized Only authenticated moderators can update a post.
+ * @apiError (Unauthorized 404) Permlink of the post cannot be found in the database.
+ */
+router.route('/reserve').post(
+  validate(reserve),
+  sc2Middleware,
+  checkUserMiddleware,
+  checkRoleMiddleware('moderator'),
+  isReservedMiddleware,
+  controller.reservePost,
 );
 
 /**

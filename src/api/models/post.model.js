@@ -25,6 +25,18 @@ const postSchema = new mongoose.Schema({
     lowercase: true,
   },
   moderation: {
+    reserved: {
+      type: Boolean,
+      default: false,
+    },
+    reservedBy: {
+      type: String,
+      default: null,
+    },
+    reservedUntil: {
+      type: Number,
+      default: null,
+    },
     moderated: {
       type: Boolean,
       default: false,

@@ -18,4 +18,11 @@ module.exports = {
       approved: Joi.boolean().required(),
     },
   },
+  // POST /v1/moderation/reserve
+  reserve: {
+    body: {
+      access_token: Joi.string().min(6).max(512).required(),
+      permlink: Joi.string().required(),
+    },
+  },
 };
