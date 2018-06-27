@@ -4,6 +4,41 @@ const User = require('../models/user.model');
 const config = require('../../config/vars');
 
 /**
+ * Method to find or create a new user
+ * @param {String} username: Username to be find or created
+ * @private
+ * @author Jayser Mendez
+ */
+const createUser = async (username, next) => {
+  try {
+    // Try to find the username in database.
+    let user = await User.findOne({ username });
+
+    // If the user does not exist, make it
+    if (!user) {
+      // Create a new user object with the required data.
+      const newUser = await new User({
+        username,
+      });
+
+      // Insert the new username in database.
+      user = await User.create(newUser);
+    }
+
+    // Return the reference to the user object
+    return user;
+
+    // Catch any error
+  } catch (err) {
+    return next({
+      status: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Opps! Something is wrong in our server. Please report it to the administrator.',
+      error: err,
+    });
+  }
+};
+
+/**
  * Method to moderate a post
  * @public
  * @author Jayser Mendez
@@ -231,96 +266,149 @@ exports.resetStatus = async (req, res, next) => {
  * @public
  * @author Jayser Mendez
  */
-// eslint-disable-next-line
-exports.createMember = (role) => {
-  return async (req, res, next) => {
-    try {
-      // Grab the user object from the locals
-      const teamMember = res.locals.username;
-      const { username } = req.body;
+exports.createMember = role => async (req, res, next) => {
+  try {
+    // Grab the user object from the locals
+    const teamMember = res.locals.username;
 
-      // If the supervisor wants to add a new moderator, insert the respectives roles.
-      if (role === 'moderator') {
+    // Grab the username from the POST body
+    const { username } = req.body;
+
+    // If the supervisor wants to add a new moderator, insert the respectives roles.
+    if (role === 'moderator') {
+      // Find/create the user
+      const user = await createUser(username);
+
+      // Update user object with new roles
+      await user.update({
+        $set: { roles: ['contributor', 'moderator'] },
+      });
+
+      // Let the client know that the new moderator was added correctly
+      return res.send({
+        status: httpStatus.OK,
+        message: 'The moderator was added correctly to the team',
+      });
+
+      // If the supervisor wants to add a new supervisor, insert the respectives roles.
+    } else if (role === 'supervisor') {
+      // Since only the master user can add a new supervisor, check if the current user
+      // is the master user. If so, allow to make a new supervisor
+      if (teamMember === config.master_user) {
         // Find/create the user
         const user = await createUser(username);
 
         // Update user object with new roles
         await user.update({
-          $set: { roles: ['contributor', 'moderator'] },
+          $set: { roles: ['contributor', 'moderator', 'supervisor'] },
         });
 
         // Let the client know that the new moderator was added correctly
         return res.send({
           status: httpStatus.OK,
-          message: 'The moderator was added correctly to the team',
-        });
-
-      // If the supervisor wants to add a new supervisor, insert the respectives roles.
-      } else if (role === 'supervisor') {
-        // Since only the master user can add a new supervisor, check if the current user
-        // is the master user. If so, allow to make a new supervisor
-        if (teamMember === config.master_user) {
-          // Find/create the user
-          const user = await createUser(username);
-
-          // Update user object with new roles
-          await user.update({
-            $set: { roles: ['contributor', 'moderator', 'supervisor'] },
-          });
-
-          // Let the client know that the new moderator was added correctly
-          return res.send({
-            status: httpStatus.OK,
-            message: 'The supervisor was added correctly to the team',
-          });
-        }
-
-        // Otherwise, reject the action
-        return res.status(httpStatus.UNAUTHORIZED).send({
-          status: httpStatus.UNAUTHORIZED,
-          message: 'Only the master supervisor can add a new supervisor',
+          message: 'The supervisor was added correctly to the team',
         });
       }
 
-      return true;
-
-    // Catch any error
-    } catch (err) {
-      return next({
-        status: httpStatus.INTERNAL_SERVER_ERROR,
-        message: 'Opps! Something is wrong in our server. Please report it to the administrator.',
-        error: err,
+      // Otherwise, reject the action
+      return res.status(httpStatus.UNAUTHORIZED).send({
+        status: httpStatus.UNAUTHORIZED,
+        message: 'Only the master supervisor can add a new supervisor',
       });
     }
-  };
+
+    return true;
+
+  // Catch any error
+  } catch (err) {
+    return next({
+      status: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Opps! Something is wrong in our server. Please report it to the administrator.',
+      error: err,
+    });
+  }
 };
 
 /**
- * Method to find or create a new user
- * @param {String} username: Username to be find or created
- * @private
+ * Method to remove role from a user
+ * @param {String} role: Role to remove
+ * @public
  * @author Jayser Mendez
  */
-const createUser = async (username, next) => {
+exports.removeRole = role => async (req, res, next) => {
   try {
-    // Try to find the username in database.
-    let user = await User.findOne({ username });
+    // Grab the user object from the locals
+    const teamMember = res.locals.username;
 
-    // If the user does not exist, make it
+    // Grab the username from the POST body
+    const { username } = req.body;
+
+    // First find the username and then check if this user is a supervisor
+    const user = await User.findOne({ username });
+
+    // If there is not user, stop the request and let the client know
     if (!user) {
-      // Create a new user object with the required data.
-      const newUser = await new User({
-        username,
+      return res.status(httpStatus.NOT_FOUND).send({
+        status: httpStatus.NOT_FOUND,
+        message: 'This user cannot be found in our records',
       });
-
-      // Insert the new username in database.
-      user = await User.create(newUser);
     }
 
-    // Return the reference to the user object
-    return user;
+    // Check if the team member wants to remove a supervisor
+    if (role === 'supervisor') {
+      // Check if the user provided is another supervisor and check if the team member
+      // is not the master supervisor
+      if (user.roles.indexOf('supervisor') > -1 && teamMember !== config.master_user) {
+        // If so, tell the client that this user is not authorized to perform such action
+        return next({
+          status: httpStatus.UNAUTHORIZED,
+          message: 'Only the master supervisor can remove another supervisor.',
+        });
 
-    // Catch any error
+      // Check if the user provided is a supervisor and the team member is a master supervisor
+      } else if (user.roles.indexOf('supervisor') > -1 && teamMember === config.master_user) {
+        // Otherwise, the master supervisor is doing it, proceed.
+        await user.update({
+          $pull: { roles: 'supervisor' },
+        });
+
+        return res.status(httpStatus.OK).send({
+          status: httpStatus.OK,
+          message: 'Supervisor role correctly removed',
+        });
+      }
+
+      // Otherwise, this user is not a supervisor, let the client know
+      return res.status(httpStatus.NOT_FOUND).send({
+        status: httpStatus.NOT_FOUND,
+        message: 'The user provided is not a supervisor',
+      });
+
+    // Check if the team member wants to remove a moderator
+    } else if (role === 'moderator') {
+      // Check if the user is currently a moderator
+      if (user.roles.indexOf('moderator') > -1) {
+        // Pull the moderator role from this user
+        await user.update({
+          $pull: { roles: 'moderator' },
+        });
+
+        return res.status(httpStatus.OK).send({
+          status: httpStatus.OK,
+          message: 'Moderator role correctly removed',
+        });
+      }
+
+      // Otherwise, this user is not a moderator, let the client know
+      return res.status(httpStatus.NOT_FOUND).send({
+        status: httpStatus.NOT_FOUND,
+        message: 'The user provided is not a moderator',
+      });
+    }
+
+    return true;
+
+  // Catch any error
   } catch (err) {
     return next({
       status: httpStatus.INTERNAL_SERVER_ERROR,

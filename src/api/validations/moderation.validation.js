@@ -33,7 +33,7 @@ module.exports = {
     },
   },
   // POST /v1/moderation/add/moderator || POST /v1/moderation/add/supervisor
-  addMember: {
+  member: {
     body: {
       access_token: Joi.string().min(6).max(512).required(),
       username: Joi.string().required(),

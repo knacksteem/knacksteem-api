@@ -7,7 +7,7 @@ const isModeratedMiddleware = require('../../middlewares/is_moderated');
 const checkRoleMiddleware = require('../../middlewares/check_role');
 const isReservedMiddleware = require('../../middlewares/is_reserved');
 const {
-  ban, moderate, reserve, reset, addMember,
+  ban, moderate, reserve, reset, member,
 } = require('../../validations/moderation.validation');
 
 const router = express.Router();
@@ -136,10 +136,10 @@ router.route('/reset').post(
  * @apiSuccess {Number}  status         http status of the request
  * @apiSuccess {String}  message        http return message
  *
- * @apiError (Unauthorized 401) Unauthorized super supervisors can add supervisors
+ * @apiError (Unauthorized 401) Unauthorized Only master supervisors can add supervisors
  */
 router.route('/add/supervisor').post(
-  validate(addMember),
+  validate(member),
   sc2Middleware,
   checkUserMiddleware,
   checkRoleMiddleware('supervisor'),
@@ -152,7 +152,7 @@ router.route('/add/supervisor').post(
  * @apiVersion 1.0.0
  * @apiName addModerator
  * @apiGroup Moderation Tools
- * @apiPermission Master Supervisors
+ * @apiPermission Supervisors
  *
  * @apiHeader {String}   access_token   SC2 User's access token
  *
@@ -161,14 +161,66 @@ router.route('/add/supervisor').post(
  * @apiSuccess {Number}  status         http status of the request
  * @apiSuccess {String}  message        http return message
  *
- * @apiError (Unauthorized 401) Unauthorized supervisors can add moderators
+ * @apiError (Unauthorized 401) Unauthorized Only supervisors can add moderators
  */
 router.route('/add/moderator').post(
-  validate(addMember),
+  validate(member),
   sc2Middleware,
   checkUserMiddleware,
   checkRoleMiddleware('supervisor'),
   controller.createMember('moderator'),
+);
+
+/**
+ * @api {post} v1/moderation/add/moderator Remove Supervisor
+ * @apiDescription Remove a supervisor from the team.
+ * @apiVersion 1.0.0
+ * @apiName removeSupervisor
+ * @apiGroup Moderation Tools
+ * @apiPermission Master Supervisors
+ *
+ * @apiHeader {String}   access_token   SC2 User's access token
+ *
+ * @apiParam  {String}   username       Username to remove as supervisor
+ *
+ * @apiSuccess {Number}  status         http status of the request
+ * @apiSuccess {String}  message        http return message
+ *
+ * @apiError (Unauthorized 401) Unauthorized Only master supervisors can remove supervisor
+ * @apiError (Not Found 401)    Not Found This user is not a supervisor
+ */
+router.route('/remove/supervisor').post(
+  validate(member),
+  sc2Middleware,
+  checkUserMiddleware,
+  checkRoleMiddleware('supervisor'),
+  controller.removeRole('supervisor'),
+);
+
+/**
+ * @api {post} v1/moderation/add/moderator Remove Moderator
+ * @apiDescription Remove a moderator from the team.
+ * @apiVersion 1.0.0
+ * @apiName removeModerator
+ * @apiGroup Moderation Tools
+ * @apiPermission Supervisors
+ *
+ * @apiHeader {String}   access_token   SC2 User's access token
+ *
+ * @apiParam  {String}   username       Username to remove as moderator
+ *
+ * @apiSuccess {Number}  status         http status of the request
+ * @apiSuccess {String}  message        http return message
+ *
+ * @apiError (Unauthorized 401) Unauthorized Only supervisors can remove moderators
+ * @apiError (Not Found 401)    Not Found This user is not a moderator
+ */
+router.route('/remove/moderator').post(
+  validate(member),
+  sc2Middleware,
+  checkUserMiddleware,
+  checkRoleMiddleware('supervisor'),
+  controller.removeRole('moderator'),
 );
 
 module.exports = router;
