@@ -19,7 +19,6 @@ const router = express.Router();
  * @apiHeader {String}   access_token      SC2 User's access token
  *
  * @apiParam  {String}   permlink          Permlink of the post
- * TODO: Add validation to the parameters.
  *
  * @apiSuccess {Number}  status            http status response
  * @apiSuccess {String}  message           http return message
@@ -42,17 +41,18 @@ router.route('/create').post(
  * @apiGroup Posts
  * @apiPermission All
  *
- * @apiParam   {String}   author            Author of the post
- * @apiParam   {String}   category          Category of the post
- * @apiParam   {String}   search            Find posts including this text or similar text
- * @apiParam   {Number}   limit             How many post to query
- * @apiParam   {Number}   skip              How many post to skip in the query
- * @apiParam   {String}   username          Check if this user has vote this post
+ * @apiParam   {String}   author                      Author of the post
+ * @apiParam   {String}   category                    Category of the post
+ * @apiParam   {String}   search                      Find posts including this text or similar text
+ * @apiParam   {Number}   limit        [limit=25]     How many post to query
+ * @apiParam   {Number}   skip         [skip=0]       How many post to skip in the query
+ * @apiParam   {String}   username                    Check if this user has vote this post
  *
- * @apiSuccess {String}   title             Title of the post
- * @apiSuccess {String}   description       Description of the post
- * @apiSuccess {String}   category          Category of the post
- * @apiSuccess {Boolean}  isVoted           Is the post voted by the provided user
+ * @apiSuccess {String}   title                       Title of the post
+ * @apiSuccess {String}   description                 Description of the post
+ * @apiSuccess {String}   category                    Category of the post
+ * @apiSuccess {Array}    tags                        Tags of the post
+ * @apiSuccess {Boolean}  isVoted                     Is the post voted by the provided user
  */
 router.route('/').get(controller.getPosts);
 

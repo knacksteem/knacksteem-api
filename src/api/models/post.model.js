@@ -24,6 +24,11 @@ const postSchema = new mongoose.Schema({
     trim: true,
     lowercase: true,
   },
+  tags: {
+    type: Array,
+    required: true,
+    default: [],
+  },
   moderation: {
     reserved: {
       type: Boolean,

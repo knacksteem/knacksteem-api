@@ -22,7 +22,7 @@ const userExist = async (req, res, next) => {
 
     // Otherwise, user does not exist, proceed to create it.
     // Create a new user object with the required data.
-    const newUser = new User({
+    const newUser = await new User({
       username: res.locals.username,
     });
 
