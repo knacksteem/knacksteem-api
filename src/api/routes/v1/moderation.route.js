@@ -29,7 +29,7 @@ const router = express.Router();
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated moderators can update a post.
- * @apiError (Unauthorized 404) Permlink of the post cannot be found in the database.
+ * @apiError (Unauthorized 404) NotFound Permlink of the post cannot be found in the database.
  */
 router.route('/moderate').post(
   validate(moderate),
@@ -56,7 +56,7 @@ router.route('/moderate').post(
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated moderators can update a post.
- * @apiError (Unauthorized 404) Permlink of the post cannot be found in the database.
+ * @apiError (Unauthorized 404) NotFound Permlink of the post cannot be found in the database.
  */
 router.route('/reserve').post(
   validate(reserve),
@@ -85,7 +85,7 @@ router.route('/reserve').post(
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated supervisors can ban a user.
- * @apiError (Unauthorized 404) User cannot be found in database.
+ * @apiError (Unauthorized 404) NotFound User cannot be found in database.
  */
 router.route('/ban').post(
   validate(ban),
@@ -111,7 +111,7 @@ router.route('/ban').post(
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only supervisors can reset moderation data
- * @apiError (Unauthorized 404) Post cannot be found in database.
+ * @apiError (Unauthorized 404) NotFound Post cannot be found in database.
  */
 router.route('/reset').post(
   validate(reset),
@@ -172,7 +172,7 @@ router.route('/add/moderator').post(
 );
 
 /**
- * @api {post} v1/moderation/add/moderator Remove Supervisor
+ * @api {post} v1/moderation/remove/moderator Remove Supervisor
  * @apiDescription Remove a supervisor from the team.
  * @apiVersion 1.0.0
  * @apiName removeSupervisor
@@ -187,7 +187,7 @@ router.route('/add/moderator').post(
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only master supervisors can remove supervisor
- * @apiError (Not Found 401)    Not Found This user is not a supervisor
+ * @apiError (Not Found 401)    NotFound This user is not a supervisor
  */
 router.route('/remove/supervisor').post(
   validate(member),
@@ -198,7 +198,7 @@ router.route('/remove/supervisor').post(
 );
 
 /**
- * @api {post} v1/moderation/add/moderator Remove Moderator
+ * @api {post} v1/moderation/remove/moderator Remove Moderator
  * @apiDescription Remove a moderator from the team.
  * @apiVersion 1.0.0
  * @apiName removeModerator
@@ -213,7 +213,7 @@ router.route('/remove/supervisor').post(
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only supervisors can remove moderators
- * @apiError (Not Found 401)    Not Found This user is not a moderator
+ * @apiError (Not Found 401)    NotFound This user is not a moderator
  */
 router.route('/remove/moderator').post(
   validate(member),
