@@ -11,8 +11,8 @@ const router = express.Router();
  * @apiGroup Stats
  * @apiPermission all
  *
- * @apiParam   {Number}  limit          [limit=25]     How many post to query
- * @apiParam   {Number}  skip           [skip=0]       How many post to skip in the query
+ * @apiParam   {Number}  [limit=25]     How many post to query
+ * @apiParam   {Number}  [skip=0]       How many post to skip in the query
  *
  * @apiSuccess {Number}  status         http status of the request
  * @apiSuccess {Array}   results        Array object with pending posts
@@ -28,9 +28,9 @@ router.route('/moderation/pending').get(controller.sendStats('moderation_pending
  * @apiGroup Stats
  * @apiPermission all
  *
- * @apiParam   {String}  username       Username to filter posts by moderators/supervisors
- * @apiParam   {Number}  limit          [limit=25]     How many post to query
- * @apiParam   {Number}  skip           [skip=0]       How many post to skip in the query
+ * @apiParam   {String}  [username]     Username to filter posts by moderators/supervisors
+ * @apiParam   {Number}  [limit=25]     How many post to query
+ * @apiParam   {Number}  [skip=0]       How many post to skip in the query
  *
  * @apiSuccess {Number}  status         http status of the request
  * @apiSuccess {Array}   results        Array object with pending posts
@@ -46,9 +46,9 @@ router.route('/moderation/approved').get(controller.sendStats('moderation_approv
  * @apiGroup Stats
  * @apiPermission all
  *
- * @apiParam   {String}  username       Username to filter posts by moderators/supervisors
- * @apiParam   {Number}  limit          [limit=25]     How many post to query
- * @apiParam   {Number}  skip           [skip=0]       How many post to skip in the query
+ * @apiParam   {String}  [username]     Username to filter posts by moderators/supervisors
+ * @apiParam   {Number}  [limit=25]     How many post to query
+ * @apiParam   {Number}  [skip=0]       How many post to skip in the query
  *
  * @apiSuccess {Number}  status         http status of the request
  * @apiSuccess {Array}   results        Array object with pending posts
@@ -64,9 +64,9 @@ router.route('/moderation/not-approved').get(controller.sendStats('moderation_no
  * @apiGroup Stats
  * @apiPermission all
  *
- * @apiParam   {String}  username       Username to filter posts by moderators/supervisors
- * @apiParam   {Number}  limit          [limit=25]     How many post to query
- * @apiParam   {Number}  skip           [skip=0]       How many post to skip in the query
+ * @apiParam   {String}  [username]     Username to filter posts by moderators/supervisors
+ * @apiParam   {Number}  [limit=25]     How many post to query
+ * @apiParam   {Number}  [skip=0]       How many post to skip in the query
  *
  * @apiSuccess {Number}  status         http status of the request
  * @apiSuccess {Array}   results        Array object with pending posts

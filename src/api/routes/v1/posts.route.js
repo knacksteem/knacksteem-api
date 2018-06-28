@@ -41,12 +41,12 @@ router.route('/create').post(
  * @apiGroup Posts
  * @apiPermission All
  *
- * @apiParam   {String}   author                      Author of the post
- * @apiParam   {String}   category                    Category of the post
- * @apiParam   {String}   search                      Find posts including this text or similar text
- * @apiParam   {Number}   limit        [limit=25]     How many post to query
- * @apiParam   {Number}   skip         [skip=0]       How many post to skip in the query
- * @apiParam   {String}   username                    Check if this user has vote this post
+ * @apiParam   {String}   [author]                    Author of the post
+ * @apiParam   {String}   [category]                  Category of the post
+ * @apiParam   {String}   [search]                    Find posts including this text or similar text
+ * @apiParam   {Number}   [limit=25]                  How many post to query
+ * @apiParam   {Number}   [skip=0]                    How many post to skip in the query
+ * @apiParam   {String}   [username]                  Check if this user has vote this post
  *
  * @apiSuccess {String}   title                       Title of the post
  * @apiSuccess {String}   description                 Description of the post
@@ -64,7 +64,7 @@ router.route('/').get(controller.getPosts);
  * @apiGroup Posts
  * @apiPermission All
  *
- * @apiParam   {String}   username          username of the current logged in user
+ * @apiParam   {String}   [username]        username of the current logged in user
  *
  * @apiSuccess {String}   title             Title of the post
  * @apiSuccess {String}   description       Description of the post
