@@ -1,8 +1,8 @@
 {
   "name": "knacksteem-api",
-  "version": "1.2.2",
+  "version": "1.0.0",
   "description": "API for knacksteem",
-  "author": "Anil Patel <anil.patel.gty@gmail.com>",
+  "author": "Jayser Mendez <jayser.mendez@stu.bcc.cuny.edu>",
   "main": "src/index.js",
   "private": false,
   "license": "MIT",
