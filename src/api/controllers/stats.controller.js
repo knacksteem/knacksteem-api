@@ -51,6 +51,17 @@ const buildQuery = (filter, req) => {
     }
 
     return query;
+
+  // List and count all moderated posts
+  } else if (filter === 'moderated') {
+    let query = { 'moderation.moderated': true };
+
+    // If the request has params, it is the username, append it.
+    if (Object.keys(req.query).length !== 0) {
+      query = { ...query, 'moderation.moderatedBy': req.query.username };
+    }
+
+    return query;
   }
 
   return false;
