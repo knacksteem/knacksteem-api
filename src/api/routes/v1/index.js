@@ -1,10 +1,7 @@
 const express = require('express');
-const userRoutes = require('./user.route');
-const authRoutes = require('./auth.route');
 const postsRoutes = require('./posts.route');
 const moderationRoutes = require('./moderation.route');
 const statsRoutes = require('./stats.route');
-
 
 const router = express.Router();
 
@@ -13,8 +10,9 @@ const router = express.Router();
  */
 router.use('/docs', express.static('docs'));
 
-router.use('/users', userRoutes);
-router.use('/auth', authRoutes);
+/**
+ * KnackSteem Endpoints
+ */
 router.use('/posts', postsRoutes);
 router.use('/moderation', moderationRoutes);
 router.use('/stats', statsRoutes);

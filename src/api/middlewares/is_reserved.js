@@ -19,7 +19,7 @@ const isPostReserved = async (req, res, next) => {
     if (post.moderation.reserved === true && Date.now() < post.moderation.reservedUntil) {
       return next({
         status: httpStatus.UNAUTHORIZED,
-        message: `This post is already reserved by ${post.moderation.reservedBy}.`,
+        message: `This post is already reserved by ${post.moderation.reservedBy}. You cannot moderate it by now.`,
       });
     }
 

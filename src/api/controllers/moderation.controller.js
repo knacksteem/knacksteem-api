@@ -76,8 +76,8 @@ exports.moderatePost = async (req, res, next) => {
         });
 
         // If the post is moderated correctly, send the message to the client.
-        return res.send({
-          status: 200,
+        return res.status(httpStatus.OK).send({
+          status: httpStatus.OK,
           message: 'Post moderated correctly',
         });
       }
@@ -99,8 +99,8 @@ exports.moderatePost = async (req, res, next) => {
     });
 
     // If the post is moderated correctly, send the message to the client.
-    return res.send({
-      status: 200,
+    return res.status(httpStatus.OK).send({
+      status: httpStatus.OK,
       message: 'Post moderated correctly',
     });
 
@@ -141,8 +141,8 @@ exports.banUser = async (req, res, next) => {
 
     // If the user was banned correctly, send the message to the client.
     if (user) {
-      return res.send({
-        status: 200,
+      return res.status(httpStatus.OK).send({
+        status: httpStatus.OK,
         message: 'User was banned correctly.',
       });
     }
@@ -193,7 +193,7 @@ exports.reservePost = async (req, res, next) => {
 
     // If the post is returned, it means that it was edited correctly. Let the client know it.
     if (post) {
-      return res.send({
+      return res.status(httpStatus.OK).send({
         status: httpStatus.OK,
         message: 'Post reserved correctly.',
       });
@@ -285,7 +285,7 @@ exports.createMember = role => async (req, res, next) => {
       });
 
       // Let the client know that the new moderator was added correctly
-      return res.send({
+      return res.status(httpStatus.OK).send({
         status: httpStatus.OK,
         message: 'The moderator was added correctly to the team',
       });

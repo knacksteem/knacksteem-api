@@ -24,8 +24,8 @@ exports.createPost = async (req, res, next) => {
     // Insert the post into database.
     await Post.create(newPost);
 
-    return res.send({
-      status: 200,
+    return res.status(httpStatus.OK).send({
+      status: httpStatus.OK,
       message: 'Post created correctly',
     });
 
@@ -97,7 +97,8 @@ exports.getPosts = async (req, res, next) => {
       if (err) return next(err);
 
       // Send the results to the client in a formatted JSON.
-      res.send({
+      res.status(httpStatus.OK).send({
+        status: httpStatus.OK,
         results,
         count: results.length,
       });
@@ -194,7 +195,7 @@ exports.getSinglePost = async (req, res, next) => {
     post['isVoted'] = isVoted;
 
     // Send the results to the client
-    return res.send(post);
+    return res.status(httpStatus.OK).send(post);
 
   // Catch any possible error.
   } catch (err) {
