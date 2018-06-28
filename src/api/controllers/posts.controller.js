@@ -18,6 +18,7 @@ exports.createPost = async (req, res, next) => {
       permlink: req.body.permlink,
       author: res.locals.username,
       category: req.body.category,
+      tags: req.body.tags,
     });
 
     // Insert the post into database.
@@ -108,7 +109,12 @@ exports.getPosts = async (req, res, next) => {
 
   // Catch any possible error
   } catch (err) {
-    return err;
+    // Catch errors here.
+    return next({
+      status: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Opps! Something is wrong in our server. Please report it to the administrator.',
+      error: err,
+    });
   }
 };
 

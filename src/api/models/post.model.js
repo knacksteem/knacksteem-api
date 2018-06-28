@@ -40,7 +40,7 @@ const postSchema = new mongoose.Schema({
     },
     reservedUntil: {
       type: Number,
-      default: null,
+      default: 0,
     },
     moderated: {
       type: Boolean,
