@@ -18,4 +18,25 @@ module.exports = {
       approved: Joi.boolean().required(),
     },
   },
+  // POST /v1/moderation/reserve
+  reserve: {
+    body: {
+      access_token: Joi.string().min(6).max(512).required(),
+      permlink: Joi.string().required(),
+    },
+  },
+  // POST /v1/moderation/reset
+  reset: {
+    body: {
+      access_token: Joi.string().min(6).max(512).required(),
+      permlink: Joi.string().required(),
+    },
+  },
+  // POST /v1/moderation/add/moderator || POST /v1/moderation/add/supervisor
+  member: {
+    body: {
+      access_token: Joi.string().min(6).max(512).required(),
+      username: Joi.string().required(),
+    },
+  },
 };

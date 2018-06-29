@@ -18,7 +18,7 @@ if (env === 'development') {
 }
 
 /**
- * Method to inser the master user in the database.
+ * Method to insert the master user in the database.
  * @param {String} username: Username of the master user
  * @private
  * @author Jayser Mendez.
@@ -41,11 +41,11 @@ const createMasterUser = async (username) => {
 };
 
 /**
-* Connect to mongo db
-*
-* @returns {object} Mongoose connection
-* @public
-*/
+  * Connect to mongo db
+  *
+  * @returns {object} Mongoose connection
+  * @public
+  */
 exports.connect = () => {
   mongoose.connect(mongo.uri, { keepAlive: 1 }, () => {
     // Check if the user count is 0. If so, declare the master user.

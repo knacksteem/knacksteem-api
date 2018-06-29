@@ -18,13 +18,14 @@ exports.createPost = async (req, res, next) => {
       permlink: req.body.permlink,
       author: res.locals.username,
       category: req.body.category,
+      tags: req.body.tags,
     });
 
     // Insert the post into database.
     await Post.create(newPost);
 
-    return res.send({
-      status: 200,
+    return res.status(httpStatus.OK).send({
+      status: httpStatus.OK,
       message: 'Post created correctly',
     });
 
@@ -96,7 +97,8 @@ exports.getPosts = async (req, res, next) => {
       if (err) return next(err);
 
       // Send the results to the client in a formatted JSON.
-      res.send({
+      res.status(httpStatus.OK).send({
+        status: httpStatus.OK,
         results,
         count: results.length,
       });
@@ -108,7 +110,12 @@ exports.getPosts = async (req, res, next) => {
 
   // Catch any possible error
   } catch (err) {
-    return err;
+    // Catch errors here.
+    return next({
+      status: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Opps! Something is wrong in our server. Please report it to the administrator.',
+      error: err,
+    });
   }
 };
 
@@ -188,7 +195,7 @@ exports.getSinglePost = async (req, res, next) => {
     post['isVoted'] = isVoted;
 
     // Send the results to the client
-    return res.send(post);
+    return res.status(httpStatus.OK).send(post);
 
   // Catch any possible error.
   } catch (err) {

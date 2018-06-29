@@ -2,30 +2,31 @@ const httpStatus = require('http-status');
 const Post = require('../models/post.model');
 
 /**
- * Check if a post is already moderated
+ * Check if a post is already reserved
  * @author Jayser Mendez.
  * @public
  */
-const isPostModerated = async (req, res, next) => {
+const isPostReserved = async (req, res, next) => {
   try {
     // Grab the permlink from the post request
     const { permlink } = req.body;
 
-    // Ask database if this moderator has moderated this post before
+    // Ask database if the post exist
     const post = await Post.findOne({ permlink });
 
-    // If this post is already moderated, prevent the moderator to moderate it again.
-    if (post.moderation.moderated === true) {
+    // If this post is already reserved, prevent the moderator to reserve it again.
+    // If the reservation is expired, the reserved field is void.
+    if (post.moderation.reserved === true && Date.now() < post.moderation.reservedUntil) {
       return next({
         status: httpStatus.UNAUTHORIZED,
-        message: `This post is already moderated by ${post.moderation.moderatedBy}. Contact a supervisor to change its status.`,
+        message: `This post is already reserved by ${post.moderation.reservedBy}. You cannot moderate it by now.`,
       });
     }
 
-    // Expose the post object to the next middleware
+    // Since the post is found and it is not reserved, pass it to the next middleware.
     res.locals.post = post;
 
-    // If the post is not moderated, move to the next middleware
+    // If the post is not reserved, move to the next middleware.
     return next();
 
   // Catch any possible error.
@@ -39,4 +40,4 @@ const isPostModerated = async (req, res, next) => {
   }
 };
 
-module.exports = isPostModerated;
+module.exports = isPostReserved;
