@@ -116,11 +116,18 @@ exports.allUsers = async (req, res, next) => {
   try {
     // Grab the params from the request
     let { limit, skip } = req.query;
+    const { username, search } = req.query;
     limit = parseInt(limit, 10);
     skip = parseInt(skip, 10);
 
+    // Query for search
+    const searchQuery = { username: { $regex: req.query.search, $options: 'i' } };
+
+    // eslint-disable-next-line
+    const query = username ? { username } : ( search ? searchQuery : {});
+
     // Find all the users from database
-    const users = await User.find({})
+    const users = await User.find(query)
       .limit(limit || 25)
       .skip(skip || 0)
       .select({
@@ -134,11 +141,20 @@ exports.allUsers = async (req, res, next) => {
         createdAt: 1,
       });
 
-    // Send the response to the client formatted.
-    return res.status(httpStatus.OK).send({
-      status: httpStatus.OK,
-      results: users,
-      count: users.length,
+    // Check if there is a response
+    if (users.length > 0) {
+      // Send the response to the client formatted.
+      return res.status(httpStatus.OK).send({
+        status: httpStatus.OK,
+        results: users,
+        count: users.length,
+      });
+    }
+
+    // Otherwise, return 404
+    return res.status(httpStatus.NOT_FOUND).send({
+      status: httpStatus.NOT_FOUND,
+      message: 'This username does not exist in our records.',
     });
 
   // Catch errors here.
