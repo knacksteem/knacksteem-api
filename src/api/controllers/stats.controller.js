@@ -84,8 +84,14 @@ exports.sendStats = filter => async (req, res, next) => {
     limit = parseInt(limit, 10);
     skip = parseInt(skip, 10);
 
+    // Sort Query
+    const sort = { createdAt: -1 };
+
     // Find the post in the database
-    const posts = await Post.find(buildQuery(filter, req)).limit(limit || 25).skip(skip || 0);
+    const posts = await Post.find(buildQuery(filter, req))
+      .limit(limit || 25)
+      .skip(skip || 0)
+      .sort(sort);
 
     // Send the response to the client formatted.
     return res.status(httpStatus.OK).send({
@@ -105,6 +111,45 @@ exports.sendStats = filter => async (req, res, next) => {
 };
 
 /**
+ * Method to construct query based on parameters
+ * @param {Object} req: url params
+ * @private
+ * @author Jayser Mendez
+ */
+const constructQuery = (req) => {
+  const { search, username, banned } = req.query;
+
+  // Query for username
+  const usernameCondition = (username);
+  const usernameQuery = { username };
+
+  // Query for search
+  const searchCondition = (search);
+  const searchQuery = { username: { $regex: search, $options: 'i' } };
+
+  // Query for banned users
+  const bannedCondition = (banned);
+  const bannedQuery = { isBanned: banned };
+
+  // All Conditions (exclude usernameCondition since it is a single result)
+  const allConditions = (searchCondition && bannedCondition);
+  const allQuery = {
+    username: { $regex: search, $options: 'i' },
+    isBanned: banned,
+  };
+
+  /**
+   * If saerch and banned exist in the query, return query based by search and banned.
+   * Else if If the username exist in the query, return query by user.
+   * Else if the search is in the query, return query by search.
+   * Else if banned is in the query, return query by banned
+   * Else return all users
+   */
+  // eslint-disable-next-line
+  return allConditions ? allQuery : ( usernameCondition ? usernameQuery : ( searchCondition ? searchQuery : (bannedCondition ? bannedQuery : {})));
+};
+
+/**
  * Method to query and list all users in database
  * @param {Object} req: url params
  * @param {Function} res: Express.js response callback
@@ -116,15 +161,11 @@ exports.allUsers = async (req, res, next) => {
   try {
     // Grab the params from the request
     let { limit, skip } = req.query;
-    const { username, search } = req.query;
     limit = parseInt(limit, 10);
     skip = parseInt(skip, 10);
 
-    // Query for search
-    const searchQuery = { username: { $regex: req.query.search, $options: 'i' } };
-
-    // eslint-disable-next-line
-    const query = username ? { username } : ( search ? searchQuery : {});
+    // construct the query for database
+    const query = constructQuery(req);
 
     // Find all the users from database
     const users = await User.find(query)
@@ -154,7 +195,7 @@ exports.allUsers = async (req, res, next) => {
     // Otherwise, return 404
     return res.status(httpStatus.NOT_FOUND).send({
       status: httpStatus.NOT_FOUND,
-      message: 'This username does not exist in our records.',
+      message: 'There are not results matching your query.',
     });
 
   // Catch errors here.

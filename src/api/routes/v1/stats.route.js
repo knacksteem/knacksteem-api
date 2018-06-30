@@ -103,6 +103,8 @@ router.route('/moderation/reserved').get(controller.sendStats('reserved'));
  * @apiParam   {String}  [username]     Find a specific user by its username
  * @apiParam   {Number}  [limit=25]     How many post to query
  * @apiParam   {Number}  [skip=0]       How many post to skip in the query
+ * @apiParam   {Boolean} [banned]       Banned or not banned users
+ * @apiParam   {String}  [search]       Find users including this text or similar text
  *
  * @apiSuccess {Number}  status         http status of the request
  * @apiSuccess {Array}   results        Array object with all users or a user
