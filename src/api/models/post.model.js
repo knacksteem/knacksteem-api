@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const timestamps = require('mongoose-timestamp-date-unix');
 
 /**
  * Post Schema
@@ -59,8 +60,6 @@ const postSchema = new mongoose.Schema({
       default: null,
     },
   },
-}, {
-  timestamps: true,
 });
 
 // Declare index in post schema for faster query.
@@ -75,6 +74,9 @@ postSchema.index({
   'moderation.approved': 1,
   'moderation.moderated': 1,
 }, { name: 'post_index' });
+
+// Convert date to timestamps
+postSchema.plugin(timestamps);
 
 /**
  * @typedef Post

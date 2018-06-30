@@ -1,4 +1,5 @@
 const Post = require('../models/post.model');
+const User = require('../models/user.model');
 const httpStatus = require('http-status');
 
 /**
@@ -88,6 +89,45 @@ exports.sendStats = filter => async (req, res, next) => {
       status: httpStatus.OK,
       results: posts,
       count: posts.length,
+    });
+
+  // Catch errors here.
+  } catch (err) {
+    return next({
+      status: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Opps! Something is wrong in our server. Please report it to the administrator.',
+      error: err,
+    });
+  }
+};
+
+exports.allUsers = async (req, res, next) => {
+  try {
+    // Grab the params from the request
+    let { limit, skip } = req.query;
+    limit = parseInt(limit, 10);
+    skip = parseInt(skip, 10);
+
+    // Find all the users from database
+    const users = await User.find({})
+      .limit(limit || 25)
+      .skip(skip || 0)
+      .select({
+        _id: 0,
+        username: 1,
+        roles: 1,
+        isBanned: 1,
+        bannedUntil: 1,
+        banReason: 1,
+        bannedBy: 1,
+        createdAt: 1,
+      });
+
+    // Send the response to the client formatted.
+    return res.status(httpStatus.OK).send({
+      status: httpStatus.OK,
+      results: users,
+      count: users.length,
     });
 
   // Catch errors here.

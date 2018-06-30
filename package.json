@@ -72,6 +72,7 @@
     "method-override": "^2.3.8",
     "moment-timezone": "^0.5.13",
     "mongoose": "^5.0.13",
+    "mongoose-timestamp-date-unix": "^0.6.2",
     "morgan": "^1.8.1",
     "pm2": "^2.4.6",
     "remarkable": "^1.7.1",
