@@ -158,8 +158,9 @@ exports.getPosts = async (req, res, next) => {
 
 /**
  * Method to get a single post from Steem Blockchain
- * @param {*} req
- * @param {*} res
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
  * @author Huseyin Terkir (hsynterkr)
  * @returns an object with the post from Steem Blockchain
  * @public

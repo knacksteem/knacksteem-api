@@ -71,6 +71,9 @@ const buildQuery = (filter, req) => {
 /**
  * Send stats response with the provided criteria
  * @param {String} filter: criteria to determine the query
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
  * @public
  * @author Jayser Mendez
  */
@@ -101,6 +104,14 @@ exports.sendStats = filter => async (req, res, next) => {
   }
 };
 
+/**
+ * Method to query and list all users in database
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
+ * @public
+ * @author Jayser Mendez
+ */
 exports.allUsers = async (req, res, next) => {
   try {
     // Grab the params from the request
