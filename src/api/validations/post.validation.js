@@ -12,9 +12,11 @@ module.exports = {
 
   // GET /v1/posts/:author/:permlink
   single: {
-    query: {
+    param: {
       author: Joi.string().required(),
       permlink: Joi.string().required(),
+    },
+    query: {
       username: Joi.string(),
       limit: Joi.number(),
       skip: Joi.number(),
