@@ -74,15 +74,32 @@ exports.getPosts = async (req, res, next) => {
     // Declare an array to hold the URLS to do the http GET call.
     const urls = [];
 
+    // Hold the primary category of each post
+    const category = [];
+
+    // Hold the tags of each post
+    const tags = [];
+
     // Iterate over the results from the database to generate the urls.
     postsList.forEach((post) => {
       urls.push(`https://api.steemjs.com/get_content?author=${post.author}&permlink=${post.permlink}`);
+      category.push(post.category);
+      tags.push(post.tags);
     });
+
+    // Track the index of the posts
+    let index = -1;
 
     // Do all the http calls and grab the results at the end. it will do 15 parallel calls.
     async.mapLimit(urls, 15, async (url) => {
       // Fetch the http GET call results
       const response = await request({ url, json: true });
+
+      // If the post does not have an id, skip it
+      if (!response.id) {
+        index += 1; // Since the post is skiped, also skip one position
+        return null;
+      }
 
       let isVoted = false;
 
@@ -113,16 +130,22 @@ exports.getPosts = async (req, res, next) => {
       // Parse JSON metadata
       response.json_metadata = JSON.parse(response.json_metadata);
 
+      // Determine if the cover image exists
+      const coverImage = response.json_metadata.image ? response.json_metadata.image[0] : null;
+
+      index += 1; // Increase here since first one is declared as -1.
+
       // Parse only the fields needed.
       // TODO: Determine what fields we need
       return {
         title: response.title,
         description: body,
-        coverImage: response.json_metadata.image[0],
+        coverImage,
         author: response.author,
         permlink: response.permlink,
         postedAt: date,
-        category: response.category,
+        category: category[index],
+        tags: tags[index],
         votesCount: response.net_votes,
         commentsCount: response.children,
         isVoted,
@@ -133,11 +156,14 @@ exports.getPosts = async (req, res, next) => {
       // If there is any error, send it to the client.
       if (err) return next(err);
 
+      // Cleanup null elements in the array
+      results = results.filter(e => e);
+
       // Send the results to the client in a formatted JSON.
       res.status(httpStatus.OK).send({
         status: httpStatus.OK,
         results,
-        count: results.length,
+        count: results.length, // Recalculate the count by taking out the offset
       });
 
       return true;

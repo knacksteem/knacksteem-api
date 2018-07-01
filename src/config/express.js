@@ -9,6 +9,7 @@ const routes = require('../api/routes/v1');
 const { logs } = require('./vars');
 const error = require('../api/middlewares/error');
 const hpp = require('hpp');
+const { env } = require('./vars');
 
 /**
 * Express instance
@@ -35,27 +36,28 @@ app.use(helmet({
   frameguard: { action: 'deny' },
 }));
 
-// enable CORS - Cross Origin Resource Sharing
-// chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop is Postman
-const allowedOrigins = [
-  'https://knacksteem.org',
-  'http://localhost:3030',
-  'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
-];
-app.use(cors({
-  origin(origin, callback) {
-    // allow requests with no origin
-    // (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
+// Enable CORS only in production mode
+if (env !== 'development') {
+  // enable CORS - Cross Origin Resource Sharing
+  // chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop is Postman
+  const allowedOrigins = [
+    'https://knacksteem.org',
+  ];
+  app.use(cors({
+    origin(origin, callback) {
+      // allow requests with no origin
+      // (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
 
-    // If the origin is not allowed, reject the request
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
-}));
+      // If the origin is not allowed, reject the request
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+  }));
+}
 
 // Protect against HTTP parameter pollution
 app.use(hpp());
