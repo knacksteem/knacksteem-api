@@ -5,6 +5,16 @@ const helper = require('../utils/Helper');
 const client = require('../utils/SteemAPI');
 const steem = require('steem');
 const httpStatus = require('http-status');
+const Remarkable = require('remarkable');
+const striptags = require('striptags');
+
+// Remarkable configuration
+const md = new Remarkable({
+  html: true,
+  breaks: true,
+  linkify: false,
+  typographer: false, // https://github.com/jonschlinkert/remarkable/issues/142#issuecomment-221546793
+});
 
 /**
  * Insert a new post into database
@@ -82,12 +92,39 @@ exports.getPosts = async (req, res, next) => {
         isVoted = helper.isVoted(response.active_votes, username);
       }
 
+      // Convert the body from markdown into HTML to strip it
+      let body = md.render(response.body);
+
+      // Strip all the tags to get only text
+      body = striptags(body);
+
+      // Remove all urls from the body
+      body = body.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+
+      // Unscape some HTML characters
+      body = body.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#039;/g, '\'');
+
+      // Truncate the characters to 250
+      body = body.substring(0, 250);
+
+      // Get the date in timestamp
+      const date = +new Date(response.created);
+
+      // Parse JSON metadata
+      response.json_metadata = JSON.parse(response.json_metadata);
+
       // Parse only the fields needed.
       // TODO: Determine what fields we need
       return {
         title: response.title,
-        description: response.body,
+        description: body,
+        coverImage: response.json_metadata.image[0],
+        author: response.author,
+        permlink: response.permlink,
+        postedAt: date,
         category: response.category,
+        votesCount: response.net_votes,
+        commentsCount: response.children,
         isVoted,
       };
 
@@ -121,8 +158,9 @@ exports.getPosts = async (req, res, next) => {
 
 /**
  * Method to get a single post from Steem Blockchain
- * @param {*} req
- * @param {*} res
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
  * @author Huseyin Terkir (hsynterkr)
  * @returns an object with the post from Steem Blockchain
  * @public

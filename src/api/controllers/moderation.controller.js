@@ -6,6 +6,7 @@ const config = require('../../config/vars');
 /**
  * Method to find or create a new user
  * @param {String} username: Username to be find or created
+ * @param {Function} next: Express.js middleware callback
  * @private
  * @author Jayser Mendez
  */
@@ -40,6 +41,9 @@ const createUser = async (username, next) => {
 
 /**
  * Method to moderate a post
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
  * @public
  * @author Jayser Mendez
  */
@@ -117,6 +121,9 @@ exports.moderatePost = async (req, res, next) => {
 
 /**
  * Method to ban a user (Only for supervisors)
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
  * @public
  * @author Jayser Mendez
  */
@@ -166,6 +173,9 @@ exports.banUser = async (req, res, next) => {
 
 /**
  * Method to reserve a post for moderation.
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
  * @public
  * @author Jayser Mendez
  */
@@ -218,6 +228,9 @@ exports.reservePost = async (req, res, next) => {
 
 /**
  * Method to reset moderation data of a post (supervisors)
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
  * @public
  * @author Jayser Mendez
  */
@@ -263,6 +276,9 @@ exports.resetStatus = async (req, res, next) => {
 
 /**
  * Method to add a new member to the team
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
  * @public
  * @author Jayser Mendez
  */
@@ -331,6 +347,9 @@ exports.createMember = role => async (req, res, next) => {
 
 /**
  * Method to remove role from a user
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
  * @param {String} role: Role to remove
  * @public
  * @author Jayser Mendez

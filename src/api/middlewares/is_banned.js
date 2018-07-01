@@ -26,8 +26,8 @@ const isBanned = async (req, res, next) => {
 
     // If not user is found, let the client know that this user does not exist
     return next({
-      status: httpStatus.UNAUTHORIZED,
-      message: 'This username does not exist in our records. Unauthorized access.',
+      status: httpStatus.NOT_FOUND,
+      message: 'This username does not exist in our records.',
     });
 
   // Catch any possible error.

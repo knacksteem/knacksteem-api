@@ -63,6 +63,7 @@
     "express": "^4.15.2",
     "express-validation": "^1.0.2",
     "helmet": "^3.5.0",
+    "hpp": "^0.2.2",
     "http-status": "^1.0.1",
     "joi": "^10.4.1",
     "jwt-simple": "0.5.1",
@@ -71,11 +72,14 @@
     "method-override": "^2.3.8",
     "moment-timezone": "^0.5.13",
     "mongoose": "^5.0.13",
+    "mongoose-timestamp-date-unix": "^0.6.2",
     "morgan": "^1.8.1",
     "pm2": "^2.4.6",
+    "remarkable": "^1.7.1",
     "request-promise-native": "^1.0.5",
     "sc2-sdk": "^1.0.2",
     "steem": "^0.7.1",
+    "striptags": "^3.1.1",
     "uuid": "^3.1.0"
   },
   "devDependencies": {

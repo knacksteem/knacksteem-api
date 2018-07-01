@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const timestamps = require('mongoose-timestamp-date-unix');
 /**
  * User Schema
  * @private
@@ -32,8 +32,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
-}, {
-  timestamps: true,
 });
 
 // Declare index in user schema for faster query.
@@ -42,6 +40,9 @@ userSchema.index({
   bannedBy: 1,
   roles: 1,
 }, { name: 'user_index' });
+
+// Convert date to timestamps
+userSchema.plugin(timestamps);
 
 /**
  * @typedef User

@@ -8,6 +8,7 @@ const helmet = require('helmet');
 const routes = require('../api/routes/v1');
 const { logs } = require('./vars');
 const error = require('../api/middlewares/error');
+const hpp = require('hpp');
 
 /**
 * Express instance
@@ -30,10 +31,34 @@ app.use(compress());
 app.use(methodOverride());
 
 // secure apps by setting various HTTP headers
-app.use(helmet());
+app.use(helmet({
+  frameguard: { action: 'deny' },
+}));
 
 // enable CORS - Cross Origin Resource Sharing
-app.use(cors());
+// chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop is Postman
+const allowedOrigins = [
+  'https://knacksteem.org',
+  'http://localhost:3030',
+  'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop',
+];
+app.use(cors({
+  origin(origin, callback) {
+    // allow requests with no origin
+    // (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    // If the origin is not allowed, reject the request
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+}));
+
+// Protect against HTTP parameter pollution
+app.use(hpp());
 
 // mount api v1 routes
 app.use('/v1', routes);
