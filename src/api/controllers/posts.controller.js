@@ -280,7 +280,8 @@ exports.getSinglePost = async (req, res, next) => {
     // Get the date in timestamp
     const date = +new Date(post.created);
 
-    const comments = await constructComments(author, permlink, username);
+    let comments = await constructComments(author, permlink, username);
+    comments = comments.reverse(); // Reverse the array to show recent first
 
     // Send the results to the client
     return res.status(httpStatus.OK).send({
@@ -308,6 +309,56 @@ exports.getSinglePost = async (req, res, next) => {
   // Catch any possible error.
   } catch (err) {
     // Catch errors here.
+    return next({
+      status: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Opps! Something is wrong in our server. Please report it to the administrator.',
+      error: err,
+    });
+  }
+};
+
+exports.getComments = async (req, res, next) => {
+  try {
+    // Grab the parameters from the param
+    const { author, permlink } = req.params;
+    const { username } = req.query;
+
+    // Grab the post from the DB to merge the data
+    const postDb = await Post.findOne({ permlink });
+
+    // If the post does not exist in the database, stop the request
+    if (!postDb) {
+      return next({
+        status: httpStatus.NOT_FOUND,
+        message: 'This post cannot be found in our records',
+      });
+    }
+
+    // Construct the url for the http call
+    const url = `https://api.steemjs.com/get_content?author=${author}&permlink=${permlink}`;
+
+    // Make a GET call to the url and grab the results
+    const post = await request({ url, json: true });
+
+    // If there are not results from this post, let the client know.
+    if (!post.id) {
+      return next({
+        status: httpStatus.NOT_FOUND,
+        message: 'This post cannot be found in our records',
+      });
+    }
+
+    // Grab all the comments for this post
+    let comments = await constructComments(author, permlink, username);
+    comments = comments.reverse(); // Reverse the array to show recent first
+
+    return res.status(httpStatus.OK).send({
+      status: httpStatus.OK,
+      results: comments,
+    });
+
+  // Catch any possible error.
+  } catch (err) {
     return next({
       status: httpStatus.INTERNAL_SERVER_ERROR,
       message: 'Opps! Something is wrong in our server. Please report it to the administrator.',
@@ -412,7 +463,7 @@ const constructComments = async (author, permlink, username, next) => {
                     votesCount: r.net_votes,
                     totalPayout,
                     isVoted,
-                    children: r.children,
+                    repliesCount: r.children,
                     replies: children,
                   };
                 });
@@ -437,11 +488,10 @@ const constructComments = async (author, permlink, username, next) => {
               authorReputation: steem.formatter.reputation(r.author_reputation),
               author: r.author,
               category: r.category,
-              net_votes: r.net_votes,
-              net_likes: r.net_likes,
+              votesCount: r.net_votes,
               totalPayout,
               isVoted,
-              children: r.children,
+              repliesCount: r.children,
               replies: [],
             };
           });
