@@ -7,6 +7,7 @@ const steem = require('steem');
 const httpStatus = require('http-status');
 const Remarkable = require('remarkable');
 const striptags = require('striptags');
+const Promise = require('bluebird');
 
 // Remarkable configuration
 const md = new Remarkable({
@@ -130,8 +131,16 @@ exports.getPosts = async (req, res, next) => {
       // Parse JSON metadata
       response.json_metadata = JSON.parse(response.json_metadata);
 
+      // Format author reputation
+      const authorReputation = steem.formatter.reputation(response.author_reputation);
+
       // Determine if the cover image exists
       const coverImage = response.json_metadata.image ? response.json_metadata.image[0] : null;
+
+      // Calculate total payout for vote values
+      const totalPayout = parseFloat(response.pending_payout_value) +
+        parseFloat(response.total_payout_value) +
+        parseFloat(response.curator_payout_value);
 
       index += 1; // Increase here since first one is declared as -1.
 
@@ -142,12 +151,15 @@ exports.getPosts = async (req, res, next) => {
         description: body,
         coverImage,
         author: response.author,
+        authorReputation,
+        authorImage: `https://steemitimages.com/u/${response.author}/avatar/small`,
         permlink: response.permlink,
         postedAt: date,
         category: category[index],
         tags: tags[index],
         votesCount: response.net_votes,
         commentsCount: response.children,
+        totalPayout,
         isVoted,
       };
 
@@ -187,7 +199,7 @@ exports.getPosts = async (req, res, next) => {
  * @param {Object} req: url params
  * @param {Function} res: Express.js response callback
  * @param {Function} next: Express.js middleware callback
- * @author Huseyin Terkir (hsynterkr)
+ * @author Huseyin Terkir (hsynterkr) Refactored: Jayser Mendez
  * @returns an object with the post from Steem Blockchain
  * @public
  */
@@ -197,11 +209,25 @@ exports.getSinglePost = async (req, res, next) => {
     const { author, permlink } = req.params;
     const { username } = req.query;
 
-    // Call the get_content RPC method of Steem API to grab post data
-    const post = await client.sendAsync('get_content', [author, permlink]);
+    // Grab the post from the DB to merge the data
+    const postDb = await Post.findOne({ permlink });
+
+    // If the post does not exist in the database, stop the request
+    if (!postDb) {
+      return next({
+        status: httpStatus.NOT_FOUND,
+        message: 'This post cannot be found in our records',
+      });
+    }
+
+    // Construct the url for the http call
+    const url = `https://api.steemjs.com/get_content?author=${author}&permlink=${permlink}`;
+
+    // Make a GET call to the url and grab the results
+    const post = await request({ url, json: true });
 
     // If there are not results from this post, let the client know.
-    if (!post.author || !post.permlink) {
+    if (!post.id) {
       return next({
         status: httpStatus.NOT_FOUND,
         message: 'This post cannot be found in our records',
@@ -212,23 +238,15 @@ exports.getSinglePost = async (req, res, next) => {
     post.json_metadata = JSON.parse(post.json_metadata);
 
     // Get body image of the post.
-    // eslint-disable-next-line
-    post.image = post.json_metadata.image[0];
+    const coverImage = post.json_metadata.image ? post.json_metadata.image[0] : null;
 
     // Use steem formatter to format reputation
-    post.author_reputation = steem.formatter.reputation(post.author_reputation);
+    const authorReputation = steem.formatter.reputation(post.author_reputation);
 
     // Calculate total payout for vote values
     const totalPayout = parseFloat(post.pending_payout_value) +
                         parseFloat(post.total_payout_value) +
                         parseFloat(post.curator_payout_value);
-
-    // Get the votes weight as percentage.
-    // eslint-disable-next-line
-    for (let i in post.beneficiaries) {
-      // eslint-disable-next-line
-      post.beneficiaries[i].weight = (post.beneficiaries[i].weight) / 100;
-    }
 
     // Calculate recent voteRshares and ratio values.
     const voteRshares = post.active_votes.reduce((a, b) => a + parseFloat(b.rshares), 0);
@@ -241,7 +259,8 @@ exports.getSinglePost = async (req, res, next) => {
       post.active_votes[i].reputation = steem.formatter.reputation(post.active_votes[i].reputation);
       // eslint-disable-next-line
       post.active_votes[i].percent = post.active_votes[i].percent / 100;
-      post.active_votes[i].profile_image = `https://steemitimages.com/u/${post.active_votes[i].voter}/avatar/small`;
+      post.active_votes[i].time = +new Date(post.active_votes[i].time);
+      post.active_votes[i].profileImage = `https://steemitimages.com/u/${post.active_votes[i].voter}/avatar/small`;
     }
 
     // Sort votes by vote value
@@ -258,8 +277,33 @@ exports.getSinglePost = async (req, res, next) => {
     // eslint-disable-next-line
     post['isVoted'] = isVoted;
 
+    // Get the date in timestamp
+    const date = +new Date(post.created);
+
+    const comments = await constructComments(author, permlink, username);
+
     // Send the results to the client
-    return res.status(httpStatus.OK).send(post);
+    return res.status(httpStatus.OK).send({
+      status: httpStatus.OK,
+      results: {
+        title: post.title,
+        description: post.body,
+        coverImage,
+        author: post.author,
+        authorReputation,
+        authorImage: `https://steemitimages.com/u/${post.author}/avatar/small`,
+        permlink: post.permlink,
+        postedAt: date,
+        category: postDb.category,
+        tags: postDb.tags,
+        votesCount: post.net_votes,
+        commentsCount: post.children,
+        comments,
+        totalPayout,
+        activeVotes,
+        isVoted,
+      },
+    });
 
   // Catch any possible error.
   } catch (err) {
@@ -318,4 +362,98 @@ const constructQuery = (req) => {
    */
   // eslint-disable-next-line
   return allConditions ? allQuery : (authorCondition ? authorQuery : (categoryCondition ? categoryQuery : (searchCondition ? searchQuery : {})));
+};
+
+/**
+ * Method to fetch comments with replies
+ * @param {String} author: author of the post
+ * @param {String} permlink: permlink of the post
+ * @param {String} username: username of the current user
+ * @param {Function} next: Express.js middleware callback
+ * @private
+ * @author Jayser Mendez
+ */
+// eslint-disable-next-line
+const constructComments = async (author, permlink, username, next) => {
+  try {
+    // Inner function to fetch replies
+    // eslint-disable-next-line
+    const fetchReplies = (author, permlink) => {
+      // Call Steem RPC server to get the replies of the current post
+      return client.sendAsync('get_content_replies', [author, permlink])
+        // eslint-disable-next-line
+        .then((replies) => {
+          // Map the responses with the post
+          return Promise.map(replies, (r) => {
+            // If there are replies to this comment, recursively grab them
+            if (r.children > 0) {
+              // Fectch the replies of the comment recursively by calling the method again
+              return fetchReplies(r.author, r.permlink)
+                .then((children) => {
+                  // Determine if the current reply is voted by the username
+                  const isVoted = helper.isVoted(r.active_votes, username);
+
+                  // Calculate the total payout of this reply
+                  const totalPayout = parseFloat(r.pending_payout_value) +
+                        parseFloat(r.total_payout_value) +
+                        parseFloat(r.curator_payout_value);
+
+                  // Return the formatted reply
+                  return {
+                    description: r.body,
+                    parent_author: r.parent_author,
+                    authorImage: `https://steemitimages.com/u/${r.author}/avatar/small`,
+                    postedAt: r.created,
+                    url: r.url,
+                    permlink: r.permlink,
+                    authorReputation: steem.formatter.reputation(r.author_reputation),
+                    author: r.author,
+                    category: r.category,
+                    votesCount: r.net_votes,
+                    totalPayout,
+                    isVoted,
+                    children: r.children,
+                    replies: children,
+                  };
+                });
+            }
+
+            // Determine if the current reply is voted by the username
+            const isVoted = helper.isVoted(r.active_votes, username);
+
+            // Calculate the total payout of this reply
+            const totalPayout = parseFloat(r.pending_payout_value) +
+                        parseFloat(r.total_payout_value) +
+                        parseFloat(r.curator_payout_value);
+
+            // Return the formatted reply
+            return {
+              description: r.body,
+              parent_author: r.parent_author,
+              authorImage: `https://steemitimages.com/u/${r.author}/avatar/small`,
+              postedAt: r.created,
+              url: r.url,
+              permlink: r.permlink,
+              authorReputation: steem.formatter.reputation(r.author_reputation),
+              author: r.author,
+              category: r.category,
+              net_votes: r.net_votes,
+              net_likes: r.net_likes,
+              totalPayout,
+              isVoted,
+              children: r.children,
+              replies: [],
+            };
+          });
+        });
+    };
+
+    return fetchReplies(author, permlink);
+  } catch (err) {
+    return next({
+      status: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Opps! Something is wrong in our server. Please report it to the administrator.',
+      error: err,
+    });
+  }
 };
