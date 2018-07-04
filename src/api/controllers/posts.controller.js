@@ -583,7 +583,10 @@ const constructComments = async (author, permlink, username, next) => {
         });
     };
 
+    // Return the replies recursively
     return fetchReplies(author, permlink);
+
+  // Catch any possible error.
   } catch (err) {
     return next({
       status: httpStatus.INTERNAL_SERVER_ERROR,
