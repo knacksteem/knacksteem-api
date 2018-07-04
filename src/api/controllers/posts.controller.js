@@ -195,6 +195,83 @@ exports.getPosts = async (req, res, next) => {
 };
 
 /**
+ * Method to retrieve votes from a post
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
+ * @public
+ * @author Jayser Mendez
+ */
+exports.getVotes = async (req, res, next) => {
+  try {
+    // Grab the parameters from the param
+    const { author, permlink } = req.params;
+
+    // Grab the post to see if the post exists
+    const postDb = await Post.findOne({ permlink });
+
+    // If the post does not exist in the database, stop the request
+    if (!postDb) {
+      return next({
+        status: httpStatus.NOT_FOUND,
+        message: 'This post cannot be found in our records',
+      });
+    }
+
+    // Construct the url for the http call
+    const url = `https://api.steemjs.com/get_content?author=${author}&permlink=${permlink}`;
+
+    // Make a GET call to the url and grab the results
+    const post = await request({ url, json: true });
+
+    // If there are not results from this post, let the client know.
+    if (!post.id) {
+      return next({
+        status: httpStatus.NOT_FOUND,
+        message: 'This post cannot be found in our records',
+      });
+    }
+
+    // Calculate total payout for vote values
+    const totalPayout = parseFloat(post.pending_payout_value) +
+                        parseFloat(post.total_payout_value) +
+                        parseFloat(post.curator_payout_value);
+
+    // Calculate recent voteRshares and ratio values.
+    const voteRshares = post.active_votes.reduce((a, b) => a + parseFloat(b.rshares), 0);
+    const ratio = totalPayout / voteRshares;
+
+    // Calculate exact values of votes
+    // eslint-disable-next-line
+    for (let i in post.active_votes) {
+      post.active_votes[i].voteValue = parseFloat((post.active_votes[i].rshares * ratio).toFixed(2));
+      post.active_votes[i].voterReputation = steem.formatter.reputation(post.active_votes[i].reputation);
+      // eslint-disable-next-line
+      post.active_votes[i].percent = post.active_votes[i].percent / 100;
+      post.active_votes[i].votedAt = +new Date(post.active_votes[i].time);
+      post.active_votes[i].voterImage = `https://steemitimages.com/u/${post.active_votes[i].voter}/avatar/small`;
+    }
+
+    // Sort votes by vote value
+    const activeVotes = post.active_votes.slice(0);
+    activeVotes.sort((a, b) => parseFloat(b.voteValue) - parseFloat(a.voteValue));
+
+    return res.status(httpStatus.OK).send({
+      status: httpStatus.OK,
+      results: activeVotes,
+    });
+
+  // Catch any possible error.
+  } catch (err) {
+    return next({
+      status: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Opps! Something is wrong in our server. Please report it to the administrator.',
+      error: err,
+    });
+  }
+};
+
+/**
  * Method to get a single post from Steem Blockchain
  * @param {Object} req: url params
  * @param {Function} res: Express.js response callback
@@ -264,8 +341,8 @@ exports.getSinglePost = async (req, res, next) => {
     }
 
     // Sort votes by vote value
-    const activeVotes = post.active_votes.slice(0);
-    activeVotes.sort((a, b) => b.value - a.value);
+    const activeVotes = post.active_votes;
+    activeVotes.sort((a, b) => parseFloat(b.voteValue) - parseFloat(a.voteValue));
 
     let isVoted = false;
 
@@ -317,6 +394,14 @@ exports.getSinglePost = async (req, res, next) => {
   }
 };
 
+/**
+ * Method to get comments of a specific post
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
+ * @public
+ * @author Jayser Mendez
+ */
 exports.getComments = async (req, res, next) => {
   try {
     // Grab the parameters from the param
