@@ -255,12 +255,12 @@ exports.getSinglePost = async (req, res, next) => {
     // Calculate exact values of votes
     // eslint-disable-next-line
     for (let i in post.active_votes) {
-      post.active_votes[i].value = (post.active_votes[i].rshares * ratio).toFixed(2);
-      post.active_votes[i].reputation = steem.formatter.reputation(post.active_votes[i].reputation);
+      post.active_votes[i].voteValue = parseFloat((post.active_votes[i].rshares * ratio).toFixed(2));
+      post.active_votes[i].voterReputation = steem.formatter.reputation(post.active_votes[i].reputation);
       // eslint-disable-next-line
       post.active_votes[i].percent = post.active_votes[i].percent / 100;
-      post.active_votes[i].time = +new Date(post.active_votes[i].time);
-      post.active_votes[i].profileImage = `https://steemitimages.com/u/${post.active_votes[i].voter}/avatar/small`;
+      post.active_votes[i].votedAt = +new Date(post.active_votes[i].time);
+      post.active_votes[i].voterImage = `https://steemitimages.com/u/${post.active_votes[i].voter}/avatar/small`;
     }
 
     // Sort votes by vote value
@@ -452,7 +452,7 @@ const constructComments = async (author, permlink, username, next) => {
                   // Return the formatted reply
                   return {
                     description: r.body,
-                    parent_author: r.parent_author,
+                    parentAuthor: r.parent_author,
                     authorImage: `https://steemitimages.com/u/${r.author}/avatar/small`,
                     postedAt: r.created,
                     url: r.url,
@@ -480,7 +480,7 @@ const constructComments = async (author, permlink, username, next) => {
             // Return the formatted reply
             return {
               description: r.body,
-              parent_author: r.parent_author,
+              parentAuthor: r.parent_author,
               authorImage: `https://steemitimages.com/u/${r.author}/avatar/small`,
               postedAt: r.created,
               url: r.url,
