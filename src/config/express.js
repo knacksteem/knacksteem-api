@@ -57,6 +57,14 @@ if (env !== 'development') {
       return callback(null, true);
     },
   }));
+
+// Else if the env is development
+} else {
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  });
 }
 
 // Protect against HTTP parameter pollution
