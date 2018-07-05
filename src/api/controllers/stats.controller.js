@@ -1,6 +1,9 @@
 const Post = require('../models/post.model');
 const User = require('../models/user.model');
 const httpStatus = require('http-status');
+const async = require('async');
+const request = require('request-promise-native');
+const steem = require('steem');
 
 /**
  * Method to generate a MongoDB query based on a given criteria
@@ -88,17 +91,97 @@ exports.sendStats = filter => async (req, res, next) => {
     const sort = { createdAt: -1 };
 
     // Find the post in the database
-    const posts = await Post.find(buildQuery(filter, req))
+    const postsList = await Post.find(buildQuery(filter, req))
       .limit(limit || 25)
       .skip(skip || 0)
       .sort(sort);
 
-    // Send the response to the client formatted.
-    return res.status(httpStatus.OK).send({
-      status: httpStatus.OK,
-      results: posts,
-      count: posts.length,
+    // Declare an array to hold the URLS to do the http GET call.
+    const urls = [];
+
+    // Hold the primary category of each post
+    const category = [];
+
+    // Hold the tags of each post
+    const tags = [];
+
+    // Iterate over the results from the database to generate the urls.
+    postsList.forEach((post) => {
+      urls.push(`https://api.steemjs.com/get_content?author=${post.author}&permlink=${post.permlink}`);
+      category.push(post.category);
+      tags.push(post.tags);
     });
+
+    // Track the index of the posts
+    let index = -1;
+
+    // Do all the http calls and grab the results at the end. it will do 15 parallel calls.
+    async.mapLimit(urls, 15, async (url) => {
+      // Fetch the http GET call results
+      const response = await request({ url, json: true });
+
+      // If the post does not have an id, skip it
+      if (!response.id) {
+        index += 1; // Since the post is skiped, also skip one position
+        return null;
+      }
+
+      // Get the date in timestamp
+      const date = +new Date(response.created);
+
+      // Parse JSON metadata
+      response.json_metadata = JSON.parse(response.json_metadata);
+
+      // Format author reputation
+      const authorReputation = steem.formatter.reputation(response.author_reputation);
+
+      // Determine if the cover image exists
+      const coverImage = response.json_metadata.image ? response.json_metadata.image[0] : null;
+
+      // Calculate total payout for vote values
+      const totalPayout = parseFloat(response.pending_payout_value) +
+        parseFloat(response.total_payout_value) +
+        parseFloat(response.curator_payout_value);
+
+      index += 1; // Increase here since first one is declared as -1.
+
+      // Parse only the fields needed.
+      // TODO: Determine what fields we need
+      return {
+        title: response.title,
+        description: response.body,
+        coverImage,
+        author: response.author,
+        authorReputation,
+        authorImage: `https://steemitimages.com/u/${response.author}/avatar/small`,
+        permlink: response.permlink,
+        postedAt: date,
+        category: category[index],
+        tags: tags[index],
+        votesCount: response.net_votes,
+        commentsCount: response.children,
+        totalPayout,
+      };
+
+    // Grab results or catch errors
+    }, (err, results) => {
+      // If there is any error, send it to the client.
+      if (err) return next(err);
+
+      // Cleanup null elements in the array
+      results = results.filter(e => e);
+
+      // Send the results to the client in a formatted JSON.
+      res.status(httpStatus.OK).send({
+        status: httpStatus.OK,
+        results,
+        count: results.length, // Recalculate the count by taking out the offset
+      });
+
+      return true;
+    });
+
+    return true;
 
   // Catch errors here.
   } catch (err) {
