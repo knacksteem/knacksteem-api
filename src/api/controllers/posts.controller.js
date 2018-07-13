@@ -520,14 +520,17 @@ const constructComments = async (author, permlink, username, next) => {
         // eslint-disable-next-line
         .then((replies) => {
           // Map the responses with the post
-          return Promise.map(replies, (r) => {
+          return Promise.map(replies, async (r) => {
             // If there are replies to this comment, recursively grab them
             if (r.children > 0) {
               // Fectch the replies of the comment recursively by calling the method again
               return fetchReplies(r.author, r.permlink)
-                .then((children) => {
+                .then(async (children) => {
+                  // Grab the active votes of the current comment
+                  const activeVotes = await client.sendAsync('get_active_votes', [r.author, r.permlink]);
+
                   // Determine if the current reply is voted by the username
-                  const isVoted = helper.isVoted(r.active_votes, username);
+                  const isVoted = helper.isVoted(activeVotes, username);
 
                   // Calculate the total payout of this reply
                   const totalPayout = parseFloat(r.pending_payout_value) +
@@ -554,8 +557,11 @@ const constructComments = async (author, permlink, username, next) => {
                 });
             }
 
+            // Grab the active votes of the current comment
+            const activeVotes = await client.sendAsync('get_active_votes', [r.author, r.permlink]);
+
             // Determine if the current reply is voted by the username
-            const isVoted = helper.isVoted(r.active_votes, username);
+            const isVoted = helper.isVoted(activeVotes, username);
 
             // Calculate the total payout of this reply
             const totalPayout = parseFloat(r.pending_payout_value) +
