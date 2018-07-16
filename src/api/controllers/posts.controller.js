@@ -5,17 +5,9 @@ const helper = require('../utils/Helper');
 const client = require('../utils/SteemAPI');
 const steem = require('steem');
 const httpStatus = require('http-status');
-const Remarkable = require('remarkable');
 const striptags = require('striptags');
 const Promise = require('bluebird');
-
-// Remarkable configuration
-const md = new Remarkable({
-  html: true,
-  breaks: true,
-  linkify: false,
-  typographer: false, // https://github.com/jonschlinkert/remarkable/issues/142#issuecomment-221546793
-});
+const md = require('../../config/remarkable');
 
 /**
  * Insert a new post into database
@@ -41,8 +33,50 @@ exports.createPost = async (req, res, next) => {
     });
 
     // If any error, catch it
-  } catch (error) {
-    return next(error);
+  } catch (err) {
+    return next({
+      status: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Opps! Something is wrong in our server. Please report it to the administrator.',
+      error: err,
+    });
+  }
+};
+
+/**
+ * Method to update the tags of a post
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
+ * @author Jayser Mendez
+ * @public
+ */
+exports.updateTags = async (req, res, next) => {
+  try {
+    const { permlink, tags } = req.body;
+    const { username } = res.locals;
+
+    const post = await Post.findOne({ permlink });
+
+    if (post.author !== username) {
+      return next({
+        status: httpStatus.UNAUTHORIZED,
+        message: 'You cannot edit someone else post',
+      });
+    }
+
+    await Post.update({ permlink }, { tags });
+
+    return res.status(httpStatus.OK).send({
+      status: httpStatus.OK,
+      message: 'Post edited correctly',
+    });
+  } catch (err) {
+    console.log(err);
+    return next({
+      status: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Opps! Something is wrong in our server. Please report it to the administrator.',
+      error: err,
+    });
   }
 };
 
@@ -148,7 +182,7 @@ exports.getPosts = async (req, res, next) => {
       // TODO: Determine what fields we need
       return {
         title: response.title,
-        description: body,
+        description: body.trim(),
         coverImage,
         author: response.author,
         authorReputation,

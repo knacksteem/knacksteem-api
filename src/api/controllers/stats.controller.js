@@ -4,6 +4,9 @@ const httpStatus = require('http-status');
 const async = require('async');
 const request = require('request-promise-native');
 const steem = require('steem');
+const md = require('../../config/remarkable');
+const striptags = require('striptags');
+const helper = require('../utils/Helper');
 
 /**
  * Method to generate a MongoDB query based on a given criteria
@@ -83,6 +86,7 @@ const buildQuery = (filter, req) => {
 exports.sendStats = filter => async (req, res, next) => {
   try {
     // Grab the params from the request
+    const { username } = req.query;
     let { limit, skip } = req.query;
     limit = parseInt(limit, 10);
     skip = parseInt(skip, 10);
@@ -126,6 +130,29 @@ exports.sendStats = filter => async (req, res, next) => {
         return null;
       }
 
+      let isVoted = false;
+
+      // Check if there is a user provided in the params.
+      // If so, determine if this user has voted the post.
+      if (username) {
+        isVoted = helper.isVoted(response.active_votes, username);
+      }
+
+      // Convert the body from markdown into HTML to strip it
+      let body = md.render(response.body);
+
+      // Strip all the tags to get only text
+      body = striptags(body);
+
+      // Remove all urls from the body
+      body = body.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+
+      // Unscape some HTML characters
+      body = body.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#039;/g, '\'');
+
+      // Truncate the characters to 250
+      body = body.substring(0, 250);
+
       // Get the date in timestamp
       const date = +new Date(response.created);
 
@@ -149,7 +176,7 @@ exports.sendStats = filter => async (req, res, next) => {
       // TODO: Determine what fields we need
       return {
         title: response.title,
-        description: response.body,
+        description: body.trim(),
         coverImage,
         author: response.author,
         authorReputation,
@@ -161,6 +188,7 @@ exports.sendStats = filter => async (req, res, next) => {
         votesCount: response.net_votes,
         commentsCount: response.children,
         totalPayout,
+        isVoted,
       };
 
     // Grab results or catch errors
