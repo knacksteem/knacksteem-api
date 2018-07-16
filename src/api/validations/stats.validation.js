@@ -9,6 +9,7 @@ module.exports = {
   posts: {
     query: {
       username: Joi.string(),
+      author: Joi.string(),
       limit: Joi.number(),
       skip: Joi.number(),
     },

@@ -28,7 +28,7 @@ const buildQuery = (filter, req) => {
 
     // If the request has params, it is the username, append it.
     if (Object.keys(req.query).length !== 0) {
-      query = { ...query, 'moderation.moderatedBy': req.query.username };
+      query = { ...query, 'moderation.moderatedBy': req.query.author };
     }
 
     return query;
@@ -39,7 +39,7 @@ const buildQuery = (filter, req) => {
 
     // If the request has params, it is the username, append it.
     if (Object.keys(req.query).length !== 0) {
-      query = { ...query, 'moderation.moderatedBy': req.query.username };
+      query = { ...query, 'moderation.moderatedBy': req.query.author };
     }
 
     return query;
@@ -65,7 +65,7 @@ const buildQuery = (filter, req) => {
 
     // If the request has params, it is the username, append it.
     if (Object.keys(req.query).length !== 0) {
-      query = { ...query, 'moderation.moderatedBy': req.query.username };
+      query = { ...query, 'moderation.moderatedBy': req.query.author };
     }
 
     return query;
