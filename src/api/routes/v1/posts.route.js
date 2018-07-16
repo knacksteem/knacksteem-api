@@ -185,6 +185,11 @@ router.route('/:author/:permlink/votes').get(validate(single), controller.getVot
  * @apiHeader  {String}   access_token      SC2 User's access token
  * @apiHeader  {String}   permlink          Permlink of the post
  * @apiHeader  {Array}    tags              Tags of the post
+ *
+ * @apiSuccess {Number}   status            http status response
+ * @apiSuccess {String}   message           http return message
+ *
+ * @apiError (Unauthorized 401) Unauthorized Only authenticated users can edit a post
  */
 router.route('/update').put(validate(update), sc2Middleware, controller.updateTags);
 
