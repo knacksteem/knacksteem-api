@@ -4,7 +4,7 @@ const controller = require('../../controllers/posts.controller');
 const sc2Middleware = require('../../middlewares/sc2');
 const checkUserMiddleware = require('../../middlewares/username_exists');
 const isBannedMiddleware = require('../../middlewares/is_banned');
-const { create, single } = require('../../validations/post.validation');
+const { create, single, update } = require('../../validations/post.validation');
 
 const router = express.Router();
 
@@ -17,8 +17,9 @@ const router = express.Router();
  * @apiPermission user
  *
  * @apiHeader  {String}   access_token      SC2 User's access token
- *
- * @apiParam   {String}   permlink          Permlink of the post
+ * @apiHeader  {String}   permlink          Permlink of the post
+ * @apiHeader  {String}   category          Category of the post
+ * @apiHeader  {Array}    tags              Tags of the post
  *
  * @apiSuccess {Number}   status            http status response
  * @apiSuccess {String}   message           http return message
@@ -172,5 +173,24 @@ router.route('/:author/:permlink/comments').get(validate(single), controller.get
  * @apiError (NotFound 404) NotFound Permlink of the post cannot be found in the database.
  */
 router.route('/:author/:permlink/votes').get(validate(single), controller.getVotes);
+
+/**
+ * @api {put} v1/posts/update Update tags
+ * @apiDescription Update tags of a post
+ * @apiVersion 1.0.0
+ * @apiName updateTags
+ * @apiGroup Posts
+ * @apiPermission Logged users + Owners
+ *
+ * @apiHeader  {String}   access_token      SC2 User's access token
+ * @apiHeader  {String}   permlink          Permlink of the post
+ * @apiHeader  {Array}    tags              Tags of the post
+ *
+ * @apiSuccess {Number}   status            http status response
+ * @apiSuccess {String}   message           http return message
+ *
+ * @apiError (Unauthorized 401) Unauthorized Only authenticated users can edit a post
+ */
+router.route('/update').put(validate(update), sc2Middleware, controller.updateTags);
 
 module.exports = router;
