@@ -3,6 +3,7 @@ const validate = require('express-validation');
 const controller = require('../../controllers/categories.controller');
 const sc2Middleware = require('../../middlewares/sc2');
 const checkRoleMiddleware = require('../../middlewares/check_role');
+const checkUserMiddleware = require('../../middlewares/username_exists');
 const { create } = require('../../validations/categories.validation');
 
 const router = express.Router();
@@ -40,6 +41,6 @@ router.route('/').get(controller.getCategories);
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated users can create a post
  */
-router.route('/').post(validate(create), sc2Middleware, checkRoleMiddleware('supervisor'), controller.createCategory);
+router.route('/').post(validate(create), sc2Middleware, checkUserMiddleware, checkRoleMiddleware('supervisor'), controller.createCategory);
 
 module.exports = router;
