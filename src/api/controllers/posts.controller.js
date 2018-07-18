@@ -11,6 +11,9 @@ const md = require('../../config/remarkable');
 
 /**
  * Insert a new post into database
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
  * @author Jayser Mendez
  * @public
  */

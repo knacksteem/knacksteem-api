@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const { mongo, env } = require('./vars');
 const User = require('../api/models/user.model');
 const config = require('./vars');
+const seed = require('../api/seed/');
 
 // set mongoose Promise to Bluebird
 mongoose.Promise = Promise;
@@ -54,6 +55,9 @@ exports.connect = () => {
         createMasterUser(config.master_user);
       }
     });
+
+    // Insert the initial batch of categories into the database
+    seed.categoriesSeed.seedCategories();
   });
   return mongoose.connection;
 };
