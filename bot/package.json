@@ -1,0 +1,28 @@
+{
+  "name": "knacksteem-bot",
+  "version": "0.1.0",
+  "description": "A bot that will automatically vote on Knacksteem contributions",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/knacksteem/knacksteem-api.git"
+  },
+  "keywords": [
+    "knacksteem",
+    "knack",
+    "steem",
+    "curation",
+    "cryptocurrency",
+    "bot",
+    "automation"
+  ],
+  "author": "Trevor Reid <trevor.d.reid@gmail.com> (http://tdreid.github.io)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/knacksteem/knacksteem-api/issues"
+  },
+  "homepage": "https://github.com/knacksteem/knacksteem-api#readme"
+}
