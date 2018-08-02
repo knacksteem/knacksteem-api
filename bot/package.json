@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/knacksteem/knacksteem-api/issues"
   },
-  "homepage": "https://github.com/knacksteem/knacksteem-api#readme"
+  "homepage": "https://github.com/knacksteem/knacksteem-api#readme",
+  "dependencies": {
+    "steem-bot": "^0.8.1"
+  }
 }
