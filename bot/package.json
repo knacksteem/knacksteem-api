@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/knacksteem/knacksteem-api#readme",
   "dependencies": {
+    "dotenv": "^6.0.0",
     "steem-bot": "^0.8.1"
   }
 }
