@@ -28,6 +28,9 @@
   "homepage": "https://github.com/knacksteem/knacksteem-api#readme",
   "dependencies": {
     "dotenv": "^6.0.0",
-    "steem-bot": "^0.8.1"
+    "log4js": "^3.0.4",
+    "moment": "^2.22.2",
+    "node-schedule": "^1.3.0",
+    "steem": "^0.7.1"
   }
 }
