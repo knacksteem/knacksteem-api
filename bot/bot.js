@@ -2,16 +2,21 @@ try {
   require('dotenv').config();
 } catch (e) {
   console.error(e);
-  console.log('Configuration file not loaded.');
+  console.warn('Configuration file not loaded.');
 }
 
-const config = {
-  username: process.env.KNACKBOT_USER || 'knacksteem.org',
-  postingKey: process.env.KNACKBOT_KEY || ''
-};
+const cron = require('node-schedule');
+const logger = require('./configureLogger');
+const getVotingPower = require('./getVotingPower');
+const checkForEligiblePost = require('./checkForEligiblePost');
 
-const steembot = require('steem-bot').default;
-
-const knackbot = new steembot(config);
-
-knackbot.start();
+cron.scheduleJob(process.env.KNACKBOT_SCHEDULE, () => {
+  getVotingPower(process.env.KNACKBOT_USER, vp => {
+    if (vp >= Number(process.env.KNACKBOT_VOTING_THRESHOLD) || 99.98) {
+      logger.info('Voting threshold met.');
+      checkForEligiblePost;
+    } else {
+      logger.info(`Voting power of ${vp} is below threshold.`);
+    }
+  });
+});
