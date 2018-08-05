@@ -12,7 +12,7 @@ const checkForEligiblePost = require('./checkForEligiblePost');
 
 cron.scheduleJob(process.env.KNACKBOT_SCHEDULE, () => {
   getVotingPower(process.env.KNACKBOT_USER, vp => {
-    if (vp >= Number(process.env.KNACKBOT_VOTING_THRESHOLD) || 99.98) {
+    if (vp >= (Number(process.env.KNACKBOT_VOTING_THRESHOLD) || 99.98)) {
       logger.info(`Voting power of ${vp} meets threshold.`);
       checkForEligiblePost;
     } else {
