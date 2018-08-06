@@ -1,7 +1,8 @@
 const logger = require('./configureLogger');
+const configureSteem = require('./configureSteem');
 
 module.exports = (user, callback) => {
-  const steem = require('./configureSteem');
+  const steem = configureSteem();
   steem.api.getAccounts([user], (err, response) => {
     if (!err) {
       if (response.length > 0) {
@@ -18,7 +19,7 @@ module.exports = (user, callback) => {
         );
       }
     } else {
-      logger.error(err);
+      logger.error(`Error getting user:\n${JSON.stringify(err, null, 2)}`);
     }
   });
 };
