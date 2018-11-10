@@ -97,9 +97,9 @@ router.route('/ban').post(
 
 /**
  * @api {post} v1/moderation/unban Unban an User
- * @apiDescription Ban a user
+ * @apiDescription Uban an User
  * @apiVersion 1.0.0
- * @apiName banUser
+ * @apiName unbanUser
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
