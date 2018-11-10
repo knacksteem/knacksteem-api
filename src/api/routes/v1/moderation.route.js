@@ -7,7 +7,7 @@ const isModeratedMiddleware = require('../../middlewares/is_moderated');
 const checkRoleMiddleware = require('../../middlewares/check_role');
 const isReservedMiddleware = require('../../middlewares/is_reserved');
 const {
-  ban, moderate, reserve, reset, member,
+  ban, moderate, reserve, reset, member, unban,
 } = require('../../validations/moderation.validation');
 
 const router = express.Router();
@@ -68,7 +68,7 @@ router.route('/reserve').post(
 );
 
 /**
- * @api {post} v1/moderation/ban Ban a User
+ * @api {post} v1/moderation/ban Ban an User
  * @apiDescription Ban a user
  * @apiVersion 1.0.0
  * @apiName banUser
@@ -93,6 +93,32 @@ router.route('/ban').post(
   checkUserMiddleware,
   checkRoleMiddleware('supervisor'),
   controller.banUser,
+);
+
+/**
+ * @api {post} v1/moderation/unban Unban an User
+ * @apiDescription Ban a user
+ * @apiVersion 1.0.0
+ * @apiName banUser
+ * @apiGroup Moderation Tools
+ * @apiPermission Supervisors
+ *
+ * @apiHeader {String}   access_token   SC2 User's access token
+ *
+ * @apiParam  {String}   username       User to ban
+ *
+ * @apiSuccess {Number}  status         http status of the request
+ * @apiSuccess {String}  message        http return message
+ *
+ * @apiError (Unauthorized 401) Unauthorized Only authenticated supervisors can ban a user.
+ * @apiError (Unauthorized 404) NotFound User cannot be found in database.
+ */
+router.route('/unban').post(
+  validate(unban),
+  sc2Middleware,
+  checkUserMiddleware,
+  checkRoleMiddleware('supervisor'),
+  controller.unbanUser,
 );
 
 /**
