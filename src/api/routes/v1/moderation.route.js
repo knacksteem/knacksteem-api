@@ -7,7 +7,7 @@ const isModeratedMiddleware = require('../../middlewares/is_moderated');
 const checkRoleMiddleware = require('../../middlewares/check_role');
 const isReservedMiddleware = require('../../middlewares/is_reserved');
 const {
-  ban, moderate, reserve, reset, member,
+  ban, moderate, reserve, reset, member, unban,
 } = require('../../validations/moderation.validation');
 
 const router = express.Router();
@@ -20,8 +20,7 @@ const router = express.Router();
  * @apiGroup Moderation Tools
  * @apiPermission moderators & supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   permlink       Permlink permlink of the post
  * @apiParam  {Boolean}  approved       Whether is the post approved or not
  *
@@ -48,8 +47,7 @@ router.route('/moderate').post(
  * @apiGroup Moderation Tools
  * @apiPermission moderators & supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   permlink       Permlink permlink of the post
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -68,15 +66,14 @@ router.route('/reserve').post(
 );
 
 /**
- * @api {post} v1/moderation/ban Ban a User
+ * @api {post} v1/moderation/ban Ban an User
  * @apiDescription Ban a user
  * @apiVersion 1.0.0
  * @apiName banUser
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   username       User to ban
  * @apiParam  {String}   banReason      Reason of the ban
  * @apiParam  {Number}   bannedUntil    Timestamp of the ban expiration
@@ -96,6 +93,31 @@ router.route('/ban').post(
 );
 
 /**
+ * @api {post} v1/moderation/unban Unban an User
+ * @apiDescription Uban an User
+ * @apiVersion 1.0.0
+ * @apiName unbanUser
+ * @apiGroup Moderation Tools
+ * @apiPermission Supervisors
+ *
+ * @apiParam  {String}   access_token   SC2 User's access token
+ * @apiParam  {String}   username       User to ban
+ *
+ * @apiSuccess {Number}  status         http status of the request
+ * @apiSuccess {String}  message        http return message
+ *
+ * @apiError (Unauthorized 401) Unauthorized Only authenticated supervisors can ban a user.
+ * @apiError (Unauthorized 404) NotFound User cannot be found in database.
+ */
+router.route('/unban').post(
+  validate(unban),
+  sc2Middleware,
+  checkUserMiddleware,
+  checkRoleMiddleware('supervisor'),
+  controller.unbanUser,
+);
+
+/**
  * @api {post} v1/moderation/reset Reset Moderation
  * @apiDescription Reset moderation data of a post to default values.
  * @apiVersion 1.0.0
@@ -103,8 +125,7 @@ router.route('/ban').post(
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   permlink       Permlink of the post
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -129,8 +150,7 @@ router.route('/reset').post(
  * @apiGroup Moderation Tools
  * @apiPermission Master Supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   username       Username to add as surpevisor
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -154,8 +174,7 @@ router.route('/add/supervisor').post(
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   username       Username to add as moderator
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -179,8 +198,7 @@ router.route('/add/moderator').post(
  * @apiGroup Moderation Tools
  * @apiPermission Master Supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   username       Username to remove as supervisor
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -205,8 +223,7 @@ router.route('/remove/supervisor').post(
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   username       Username to remove as moderator
  *
  * @apiSuccess {Number}  status         http status of the request
