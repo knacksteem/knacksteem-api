@@ -20,8 +20,7 @@ const router = express.Router();
  * @apiGroup Moderation Tools
  * @apiPermission moderators & supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   permlink       Permlink permlink of the post
  * @apiParam  {Boolean}  approved       Whether is the post approved or not
  *
@@ -48,8 +47,7 @@ router.route('/moderate').post(
  * @apiGroup Moderation Tools
  * @apiPermission moderators & supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   permlink       Permlink permlink of the post
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -75,8 +73,7 @@ router.route('/reserve').post(
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   username       User to ban
  * @apiParam  {String}   banReason      Reason of the ban
  * @apiParam  {Number}   bannedUntil    Timestamp of the ban expiration
@@ -103,8 +100,7 @@ router.route('/ban').post(
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   username       User to ban
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -129,8 +125,7 @@ router.route('/unban').post(
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   permlink       Permlink of the post
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -155,8 +150,7 @@ router.route('/reset').post(
  * @apiGroup Moderation Tools
  * @apiPermission Master Supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   username       Username to add as surpevisor
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -180,8 +174,7 @@ router.route('/add/supervisor').post(
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   username       Username to add as moderator
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -205,8 +198,7 @@ router.route('/add/moderator').post(
  * @apiGroup Moderation Tools
  * @apiPermission Master Supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   username       Username to remove as supervisor
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -231,8 +223,7 @@ router.route('/remove/supervisor').post(
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiHeader {String}   access_token   SC2 User's access token
- *
+ * @apiParam  {String}   access_token   SC2 User's access token
  * @apiParam  {String}   username       Username to remove as moderator
  *
  * @apiSuccess {Number}  status         http status of the request
