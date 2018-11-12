@@ -55,8 +55,7 @@ const buildQuery = (filter, req) => {
     if (Object.keys(req.query).length !== 0) {
       query = {
         ...query,
-        'moderation.reservedBy': req.query.username,
-        'moderation.reservedUntil': { $gt: Date.now() },
+        'moderation.reservedBy': req.query.username
       };
     }
 
