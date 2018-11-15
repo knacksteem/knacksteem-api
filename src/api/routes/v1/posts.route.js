@@ -16,10 +16,10 @@ const router = express.Router();
  * @apiGroup Posts
  * @apiPermission user
  *
- * @apiHeader  {String}   access_token      SC2 User's access token
- * @apiHeader  {String}   permlink          Permlink of the post
- * @apiHeader  {String}   category          Category of the post
- * @apiHeader  {Array}    tags              Tags of the post
+ * @apiParam   {String}   access_token      SC2 User's access token
+ * @apiParam   {String}   permlink          Permlink of the post
+ * @apiParam   {String}   category          Category of the post
+ * @apiParam   {Array}    tags              Tags of the post
  *
  * @apiSuccess {Number}   status            http status response
  * @apiSuccess {String}   message           http return message
@@ -190,9 +190,9 @@ router.route('/:author/:permlink/votes').get(validate(single), controller.getVot
  * @apiGroup Posts
  * @apiPermission Logged users + Owners
  *
- * @apiHeader  {String}   access_token      SC2 User's access token
- * @apiHeader  {String}   permlink          Permlink of the post
- * @apiHeader  {Array}    tags              Tags of the post
+ * @apiParam   {String}   access_token      SC2 User's access token
+ * @apiParam   {String}   permlink          Permlink of the post
+ * @apiParam   {Array}    tags              Tags of the post
  *
  * @apiSuccess {Number}   status            http status response
  * @apiSuccess {String}   message           http return message

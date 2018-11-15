@@ -120,6 +120,48 @@ exports.moderatePost = async (req, res, next) => {
 };
 
 /**
+ * Method to unban a user (Only for supervisors)
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
+ * @public
+ * @author Jayser Mendez
+ */
+exports.unbanUser = async (req, res, next) => {
+  try {
+    const { username } = req.body;
+
+    const user = await User.findOneAndUpdate(
+      { username },
+      {
+        isBanned: false,
+        bannedBy: null,
+        banReason: null,
+        bannedUntil: null,
+      },
+    );
+
+    if (user) {
+      return res.status(httpStatus.OK).send({
+        status: httpStatus.OK,
+        message: 'User was unbanned correctly.',
+      });
+    }
+
+    return res.status(httpStatus.NOT_FOUND).send({
+      status: httpStatus.NOT_FOUND,
+      message: 'User is not found.',
+    });
+  } catch (err) {
+    return next({
+      status: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Opps! Something is wrong in our server. Please report it to the administrator.',
+      error: err,
+    });
+  }
+};
+
+/**
  * Method to ban a user (Only for supervisors)
  * @param {Object} req: url params
  * @param {Function} res: Express.js response callback

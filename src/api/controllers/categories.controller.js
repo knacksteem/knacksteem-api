@@ -65,3 +65,85 @@ exports.createCategory = async (req, res, next) => {
     });
   }
 };
+
+/**
+ * Modifies a category in database
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
+ * @public
+ * @author Jayser Mendez
+ */
+exports.editCategory = async (req, res, next) => {
+  try {
+    const { key, newKey, newName } = req.body;
+
+    // eslint-disable-next-line
+    let query = {};
+
+    if (newKey) {
+      query.key = newKey;
+    }
+
+    if (newName) {
+      query.name = newName;
+    }
+
+    const category = await Category.findOneAndUpdate(
+      { key },
+      { $set: query },
+    );
+
+    if (category) {
+      return res.status(httpStatus.OK).send({
+        status: httpStatus.OK,
+        message: 'Category was correctly modified.',
+      });
+    }
+
+    return res.status(httpStatus.NOT_FOUND).send({
+      status: httpStatus.NOT_FOUND,
+      message: 'Category is not found.',
+    });
+  } catch (err) {
+    return next({
+      status: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Opps! Something is wrong in our server. Please report it to the administrator.',
+      error: err,
+    });
+  }
+};
+
+/**
+ * Deletes a category in database
+ * @param {Object} req: url params
+ * @param {Function} res: Express.js response callback
+ * @param {Function} next: Express.js middleware callback
+ * @public
+ * @author Jayser Mendez
+ */
+exports.deleteCategory = async (req, res, next) => {
+  try {
+    const { key } = req.body;
+
+    const category = await Category.findOneAndDelete({ key });
+
+    if (category) {
+      return res.status(httpStatus.OK).send({
+        status: httpStatus.OK,
+        message: 'Category was correctly deleted.',
+      });
+    }
+
+    return res.status(httpStatus.NOT_FOUND).send({
+      status: httpStatus.NOT_FOUND,
+      message: 'Category is not found.',
+    });
+  } catch (err) {
+    return next({
+      status: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Opps! Something is wrong in our server. Please report it to the administrator.',
+      error: err,
+    });
+  }
+};
