@@ -77,6 +77,7 @@ exports.moderatePost = async (req, res, next) => {
           'moderation.approved': approved,
           'moderation.moderatedBy': moderator,
           'moderation.moderatedAt': +new Date(),
+          'moderation.reserved': false,
         });
 
         // If the post is moderated correctly, send the message to the client.
@@ -241,6 +242,8 @@ exports.reservePost = async (req, res, next) => {
       'moderation.reserved': true, // Can be voided if the reservedUntil is expired
       'moderation.reservedBy': moderator,
       'moderation.reservedUntil': reservedUntil, // Only 1 hour
+      'moderation.moderated': false, // In case in was reserved after it was moderated
+      'moderation.approved': false, // In case in was reserved after it was approved
     });
 
     // If the post is returned, it means that it was edited correctly. Let the client know it.
