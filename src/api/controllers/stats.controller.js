@@ -46,14 +46,16 @@ const buildQuery = (filter, req) => {
 
   // List and count all the reserved posts
   } else if (filter === 'reserved') {
-    let query = { 'moderation.reserved': true };
+    let query = { 
+      'moderation.reserved': true,
+      'moderation.reservedUntil': { $gt: Date.now()  }
+    };
 
     // If the request has params, it is the username, append it.
     if (Object.keys(req.query).length !== 0) {
       query = {
         ...query,
-        'moderation.reservedBy': req.query.username,
-        'moderation.reservedUntil': { $gt: Date.now() },
+        'moderation.reservedBy': req.query.username
       };
     }
 
@@ -109,11 +111,15 @@ exports.sendStats = filter => async (req, res, next) => {
     // Hold the tags of each post
     const tags = [];
 
+    // Hold the moderation info of each post
+    const moderation = [];
+
     // Iterate over the results from the database to generate the urls.
     postsList.forEach((post) => {
       urls.push(`https://api.steemjs.com/get_content?author=${post.author}&permlink=${post.permlink}`);
       category.push(post.category);
       tags.push(post.tags);
+      moderation.push(post.moderation);
     });
 
     // Track the index of the posts
@@ -185,6 +191,7 @@ exports.sendStats = filter => async (req, res, next) => {
         postedAt: date,
         category: category[index],
         tags: tags[index],
+        moderation: moderation[index],
         votesCount: response.net_votes,
         commentsCount: response.children,
         totalPayout,
