@@ -29,7 +29,7 @@ const router = express.Router();
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated moderators can update a post.
- * @apiError (Not Found 404) NotFound Permlink of the post cannot be found in the database.
+ * @apiError (Not Found 404) Not Found Permlink of the post cannot be found in the database.
  */
 router.route('/moderate').post(
   validate(moderate),
@@ -56,7 +56,7 @@ router.route('/moderate').post(
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated moderators can update a post.
- * @apiError (Not Found 404) NotFound Permlink of the post cannot be found in the database.
+ * @apiError (Not Found 404) Not Found Permlink of the post cannot be found in the database.
  */
 router.route('/reserve').post(
   validate(reserve),
@@ -85,7 +85,7 @@ router.route('/reserve').post(
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated supervisors can ban a user.
- * @apiError (Not Found 404) NotFound User cannot be found in database.
+ * @apiError (Not Found 404) Not Found User cannot be found in database.
  */
 router.route('/ban').post(
   validate(ban),
@@ -111,7 +111,7 @@ router.route('/ban').post(
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated supervisors can ban a user.
- * @apiError (Not Found 404) NotFound User cannot be found in database.
+ * @apiError (Not Found 404) Not Found User cannot be found in database.
  */
 router.route('/unban').post(
   validate(unban),
@@ -137,7 +137,7 @@ router.route('/unban').post(
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only supervisors can reset moderation data
- * @apiError (Not Found 404) NotFound Post cannot be found in database.
+ * @apiError (Not Found 404) Not Found Post cannot be found in database.
  */
 router.route('/reset').post(
   validate(reset),
@@ -213,7 +213,7 @@ router.route('/add/moderator').post(
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only master supervisors can remove supervisor
- * @apiError (Not Found 404)    NotFound This user is not a supervisor
+ * @apiError (Not Found 404)    Not Found This user is not a supervisor
  */
 router.route('/remove/supervisor').post(
   validate(member),
@@ -239,7 +239,7 @@ router.route('/remove/supervisor').post(
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only supervisors can remove moderators
- * @apiError (Not Found 404)    NotFound This user is not a moderator
+ * @apiError (Not Found 404)    Not Found This user is not a moderator
  */
 router.route('/remove/moderator').post(
   validate(member),

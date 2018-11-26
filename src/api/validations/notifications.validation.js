@@ -8,4 +8,10 @@ module.exports = {
       skip: Joi.number(),
     },
   },
+  // PUT /v1/notifications
+  readNotification: {
+    query: {
+      id: Joi.string().required(),
+    },
+  },
 };
