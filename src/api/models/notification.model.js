@@ -41,6 +41,14 @@ notificationSchema.index({
 // Convert date to timestamps
 notificationSchema.plugin(timestamps);
 
+// Duplicate the ID field.
+notificationSchema.virtual('id').get(() => this._id.toHexString());
+
+// Ensure virtual fields are serialised.
+notificationSchema.set('toJSON', {
+  virtuals: true,
+});
+
 /**
  * @typedef Notification
  */
