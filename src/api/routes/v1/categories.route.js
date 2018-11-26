@@ -60,7 +60,7 @@ router.route('/').post(validate(create), sc2Middleware, checkUserMiddleware, che
  * @apiSuccess {String}   message           http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated master supervisors can delete a category.
- * @apiError (Unauthorized 404) NotFound Key of the category cannot be found in database.
+ * @apiError (Not Found 404) NotFound Key of the category cannot be found in database.
  */
 router.route('/').delete(
   validate(deleteCat),
@@ -89,7 +89,7 @@ router.route('/').delete(
  * @apiSuccess {String}   message           http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated master supervisors can edit a category.
- * @apiError (Unauthorized 404) NotFound Key of the category cannot be found in database.
+ * @apiError (Not Found 404) NotFound Key of the category cannot be found in database.
  */
 router.route('/').put(
   validate(editCat),
