@@ -1,5 +1,4 @@
 const Post = require('../models/post.model');
-const Notification = require('../models/notification.model');
 const httpStatus = require('http-status');
 const User = require('../models/user.model');
 const config = require('../../config/vars');
