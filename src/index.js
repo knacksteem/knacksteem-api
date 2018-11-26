@@ -41,9 +41,11 @@ io.use(async (socket, next) => {
       socket.join(sc2Res.user);
 
       next();
+    } else {
+      next(new Error('Authentication error'));
     }
-    next(new Error('Authentication error'));
   } catch (err) {
+    console.log('got here first');
     next(new Error('Authentication error'));
   }
 });

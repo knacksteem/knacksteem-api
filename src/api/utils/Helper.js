@@ -18,18 +18,31 @@ exports.isVoted = (array, user) => {
 };
 
 /**
- * Generates a notification object
+ * Insert notification in database and return notification object
  * @param {String} type: type of the notification
  * @param {String} to: recipient of the notification
  * @param {Object} metadata: metadata of the notification
  */
-exports.generateNotification = (type, to, metadata = {}) => {
-  const notification = new Notification({
-    type,
-    to,
-    read: false,
-    metadata,
-  });
+exports.generateNotification = async (type, to, metadata = {}) => {
+  try {
+    const notificationObj = {
+      type,
+      to,
+      read: false,
+      metadata,
+    };
+    const notification = new Notification(notificationObj);
 
-  return notification;
+    const dbNotification = await Notification.create(notification);
+
+    if (dbNotification) {
+      notificationObj._id = dbNotification._id;
+      notificationObj.createdAt = dbNotification.createdAt;
+      return notificationObj;
+    }
+
+    return null;
+  } catch (err) {
+    return null;
+  }
 };

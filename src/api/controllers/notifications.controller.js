@@ -18,7 +18,7 @@ exports.getNotifications = async (req, res, next) => {
     if (!limit) { limit = 25; }
     if (!skip) { skip = 0; }
 
-    const notifications = await Notification.find({ to: username }).limit(limit).skip(skip);
+    const notifications = await Notification.find({ to: username }, { updatedAt: 0, __v: 0 }).limit(limit).skip(skip);
 
     return res.status(httpStatus.OK).send({
       status: httpStatus.OK,
@@ -48,7 +48,7 @@ exports.readNotification = async (req, res, next) => {
     const { id } = req.body;
 
     const notification = await Notification.findOneAndUpdate(
-      { id, to: username },
+      { _id: id, to: username },
       {
         $set: {
           read: true,
