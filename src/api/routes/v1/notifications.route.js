@@ -29,3 +29,5 @@ const router = express.Router();
  * @apiSuccess {Number}     count                        How many notifications were returned
  */
 router.route('/').get(validate(getNotifications), sc2Middleware, checkUserMiddleware, controller.getNotifications);
+
+module.exports = router;
