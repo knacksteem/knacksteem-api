@@ -125,7 +125,7 @@ router.route('/').get(controller.getPosts);
  * @apiSuccess {Number}     results.activeVotes.votedAt           Date of the vote
  * @apiSuccess {Boolean}    results.isVoted                       Has the current user voted this post
  *
- * @apiError (Not Found 404) Not Found Permlink of the post cannot be found in the database.
+ * @apiError (Not Found 404) NotFound Permlink of the post cannot be found in the database.
  */
 router.route('/:author/:permlink').get(validate(single), controller.getSinglePost);
 
@@ -156,7 +156,7 @@ router.route('/:author/:permlink').get(validate(single), controller.getSinglePos
  * @apiSuccess {String}     results.repliesCount      Count the replies to this comment
  * @apiSuccess {Object[]}   results.replies           Array with the replies of this comment
  *
- * @apiError (Not Found 404) Not Found Permlink of the post cannot be found in the database.
+ * @apiError (Not Found 404) NotFound Permlink of the post cannot be found in the database.
  */
 router.route('/:author/:permlink/comments').get(validate(single), controller.getComments);
 
@@ -179,7 +179,7 @@ router.route('/:author/:permlink/comments').get(validate(single), controller.get
  * @apiSuccess {Number}     results.voteValue         Value of the vote
  * @apiSuccess {Number}     results.votedAt           Date of the vote
  *
- * @apiError (Not Found 404) Not Found Permlink of the post cannot be found in the database.
+ * @apiError (Not Found 404) NotFound Permlink of the post cannot be found in the database.
  */
 router.route('/:author/:permlink/votes').get(validate(single), controller.getVotes);
 

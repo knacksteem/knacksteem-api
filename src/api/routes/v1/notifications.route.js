@@ -48,7 +48,7 @@ router.route('/').get(validate(getNotifications), sc2Middleware, checkUserMiddle
  * @apiSuccess {String}   message         http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated users (owning the notification) can mark it as read.
- * @apiError (Not Found 404) Not Found Notification is not found in database.
+ * @apiError (Not Found 404) NotFound Notification is not found in database.
  */
 router.route('/').patch(validate(readNotification), sc2Middleware, checkUserMiddleware, controller.readNotification);
 
