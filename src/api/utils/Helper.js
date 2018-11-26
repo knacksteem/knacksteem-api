@@ -1,3 +1,5 @@
+const Notification = require('../models/notification.model');
+
 /**
  * Method to validate vote.
  * @param {Number} array
@@ -13,4 +15,21 @@ exports.isVoted = (array, user) => {
     }
   }
   return false;
+};
+
+/**
+ * Generates a notification object
+ * @param {String} type: type of the notification
+ * @param {String} to: recipient of the notification
+ * @param {Object} metadata: metadata of the notification
+ */
+exports.generateNotification = (type, to, metadata = {}) => {
+  const notification = new Notification({
+    type,
+    to,
+    read: false,
+    metadata,
+  });
+
+  return notification;
 };

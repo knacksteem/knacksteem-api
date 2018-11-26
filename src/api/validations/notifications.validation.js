@@ -10,7 +10,7 @@ module.exports = {
   },
   // PUT /v1/notifications
   readNotification: {
-    query: {
+    body: {
       id: Joi.string().required(),
     },
   },
