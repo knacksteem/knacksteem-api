@@ -9,7 +9,8 @@ const httpStatus = require('http-status');
 const validateSc2 = async (req, res, next) => {
   try {
     // Set the access token to the sc2 instance
-    sc2.setAccessToken(req.body.access_token);
+    console.log(req.get('Authorization'));
+    sc2.setAccessToken(req.get('Authorization'));
 
     // Call the sc2 api to validate the token.
     const sc2Res = await sc2.me();

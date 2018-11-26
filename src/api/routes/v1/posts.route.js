@@ -16,7 +16,8 @@ const router = express.Router();
  * @apiGroup Posts
  * @apiPermission user
  *
- * @apiParam   {String}   access_token      SC2 User's access token
+ * @apiHeader  {String}   Authorization     SC2 User's access token
+ *
  * @apiParam   {String}   permlink          Permlink of the post
  * @apiParam   {String}   category          Category of the post
  * @apiParam   {Array}    tags              Tags of the post
@@ -42,15 +43,15 @@ router.route('/create').post(
  * @apiGroup Posts
  * @apiPermission All
  *
- * @apiParam   {String}     [author]                     		Author of the post
- * @apiParam   {String}     [category]                   		Category of the post
- * @apiParam   {String}     [search]                     		Find posts including this text or similar text
- * @apiParam   {Number}     [limit=25]                   		How many post to query
- * @apiParam   {Number}     [skip=0]                     		How many post to skip in the query
- * @apiParam   {String}     [username]                   		Check if this user has vote this post
+ * @apiParam   {String}     [author]                            Author of the post
+ * @apiParam   {String}     [category]                          Category of the post
+ * @apiParam   {String}     [search]                            Find posts including this text or similar text
+ * @apiParam   {Number}     [limit=25]                          How many post to query
+ * @apiParam   {Number}     [skip=0]                            How many post to skip in the query
+ * @apiParam   {String}     [username]                          Check if this user has vote this post
  *
- * @apiSuccess {Number}     status                       		http status response
- * @apiSuccess {Object[]}   results                      		Array with the results
+ * @apiSuccess {Number}     status                              http status response
+ * @apiSuccess {Object[]}   results                             Array with the results
  * @apiSuccess {String}     results.title                       Title of the post
  * @apiSuccess {String}     results.description                 Description of the post
  * @apiSuccess {String}     results.coverImage                  Cover image of the post
@@ -61,17 +62,17 @@ router.route('/create').post(
  * @apiSuccess {Number}     results.postedAt                    When was this post posted
  * @apiSuccess {String}     results.category                    Category of the post
  * @apiSuccess {String[]}   results.tags                        Tags of the post
- * @apiSuccess {Object}     results.moderation           		Moderation info of the post
+ * @apiSuccess {Object}     results.moderation                  Moderation info of the post
  * @apiSuccess {Boolean}    results.moderation.reserved         Has it been reserved
  * @apiSuccess {String}     results.moderation.reservedBy       Username reserved the post
- * @apiSuccess {Number}     results.moderation.reservedUntil 	Time until post is reserved
+ * @apiSuccess {Number}     results.moderation.reservedUntil    Time until post is reserved
  * @apiSuccess {Boolean}    results.moderation.moderated        Has it been moderated
  * @apiSuccess {String}     results.moderation.moderatedBy      Username moderated the post
  * @apiSuccess {Number}     results.moderation.moderatedAt      Time the post was moderated
  * @apiSuccess {Boolean}    results.moderation.approved         Has it been approved
- * @apiSuccess {Number}     results.votesCount           		Votes count for this post
- * @apiSuccess {Number}     results.commentsCount        		Comments count for this post
- * @apiSuccess {Number}     count                        		How many posts were returned
+ * @apiSuccess {Number}     results.votesCount                  Votes count for this post
+ * @apiSuccess {Number}     results.commentsCount               Comments count for this post
+ * @apiSuccess {Number}     count                               How many posts were returned
  */
 router.route('/').get(controller.getPosts);
 
@@ -190,7 +191,8 @@ router.route('/:author/:permlink/votes').get(validate(single), controller.getVot
  * @apiGroup Posts
  * @apiPermission Logged users + Owners
  *
- * @apiParam   {String}   access_token      SC2 User's access token
+ * @apiHeader  {String}   Authorization     SC2 User's access token
+ *
  * @apiParam   {String}   permlink          Permlink of the post
  * @apiParam   {Array}    tags              Tags of the post
  *

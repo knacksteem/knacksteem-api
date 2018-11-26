@@ -150,7 +150,8 @@ router.route('/reset').post(
  * @apiGroup Moderation Tools
  * @apiPermission Master Supervisors
  *
- * @apiParam  {String}   access_token   SC2 User's access token
+ * @apiHeader  String}   Authorization  SC2 User's access token
+ *
  * @apiParam  {String}   username       Username to add as surpevisor
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -174,7 +175,8 @@ router.route('/add/supervisor').post(
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiParam  {String}   access_token   SC2 User's access token
+ * @apiHeader {String}   Authorization  SC2 User's access token
+ *
  * @apiParam  {String}   username       Username to add as moderator
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -198,7 +200,8 @@ router.route('/add/moderator').post(
  * @apiGroup Moderation Tools
  * @apiPermission Master Supervisors
  *
- * @apiParam  {String}   access_token   SC2 User's access token
+ * @apiHeader {String}   Authorization  SC2 User's access token
+ *
  * @apiParam  {String}   username       Username to remove as supervisor
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -223,7 +226,8 @@ router.route('/remove/supervisor').post(
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiParam  {String}   access_token   SC2 User's access token
+ * @apiHeader {String}   Authorization  SC2 User's access token
+ *
  * @apiParam  {String}   username       Username to remove as moderator
  *
  * @apiSuccess {Number}  status         http status of the request
