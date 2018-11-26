@@ -22,6 +22,8 @@ const router = express.Router();
  *
  * @apiSuccess {Number}     status                       http status response
  * @apiSuccess {Object[]}   results                      Array with the notifications
+ * @apiSuccess {String}     results._id                  Id of the notification
+ * @apiSuccess {Number}     results.createdAt            Creation date timestamp of the notification
  * @apiSuccess {String}     results.type                 Type of the notification
  * @apiSuccess {String}     results.to                   Recipient of the notification
  * @apiSuccess {Bool}       results.read                 Notification read flag
