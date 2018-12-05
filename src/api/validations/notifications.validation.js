@@ -8,7 +8,7 @@ module.exports = {
       skip: Joi.number(),
     },
   },
-  // PUT /v1/notifications
+  // PATCH /v1/notifications
   readNotification: {
     body: {
       id: Joi.string().required(),
