@@ -74,7 +74,6 @@ exports.updateTags = async (req, res, next) => {
       message: 'Post edited correctly',
     });
   } catch (err) {
-    console.log(err);
     return next({
       status: httpStatus.INTERNAL_SERVER_ERROR,
       message: 'Opps! Something is wrong in our server. Please report it to the administrator.',

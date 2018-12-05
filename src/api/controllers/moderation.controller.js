@@ -166,6 +166,15 @@ exports.unbanUser = async (req, res, next) => {
     );
 
     if (user) {
+      // Retrieve back socketio instanace
+      const io = req.app.get('socketio');
+
+      // Create and insert the notification in database
+      const notification = await helper.generateNotification('UNBAN', username);
+
+      // Deliver notification to client side.
+      io.in(username).emit('notification', notification);
+
       return res.status(httpStatus.OK).send({
         status: httpStatus.OK,
         message: 'User was unbanned correctly.',
@@ -201,19 +210,30 @@ exports.banUser = async (req, res, next) => {
     // Grab the supervisor username from the locals
     const supervisor = res.locals.username;
 
+    const metadata = {
+      isBanned: true,
+      bannedBy: supervisor,
+      banReason,
+      bannedUntil,
+    };
+
     // Update the post with the new ban data
     const user = await User.findOneAndUpdate(
       { username },
-      {
-        isBanned: true,
-        bannedBy: supervisor,
-        banReason,
-        bannedUntil,
-      },
+      metadata,
     );
 
     // If the user was banned correctly, send the message to the client.
     if (user) {
+      // Retrieve back socketio instanace
+      const io = req.app.get('socketio');
+
+      // Create and insert the notification in database
+      const notification = await helper.generateNotification('BAN', username, metadata);
+
+      // Deliver notification to client side.
+      io.in(username).emit('notification', notification);
+
       return res.status(httpStatus.OK).send({
         status: httpStatus.OK,
         message: 'User was banned correctly.',

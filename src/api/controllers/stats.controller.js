@@ -46,16 +46,16 @@ const buildQuery = (filter, req) => {
 
   // List and count all the reserved posts
   } else if (filter === 'reserved') {
-    let query = { 
+    let query = {
       'moderation.reserved': true,
-      'moderation.reservedUntil': { $gt: Date.now()  }
+      'moderation.reservedUntil': { $gt: Date.now() },
     };
 
     // If the request has params, it is the username, append it.
     if (Object.keys(req.query).length !== 0) {
       query = {
         ...query,
-        'moderation.reservedBy': req.query.username
+        'moderation.reservedBy': req.query.username,
       };
     }
 

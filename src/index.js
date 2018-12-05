@@ -45,7 +45,6 @@ io.use(async (socket, next) => {
       next(new Error('Authentication error'));
     }
   } catch (err) {
-    console.log('got here first');
     next(new Error('Authentication error'));
   }
 });
