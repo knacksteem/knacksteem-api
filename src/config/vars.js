@@ -9,7 +9,7 @@ require('dotenv-safe').load({
 module.exports = {
   sc2_app: process.env.SC2_APP || 'steemia.app',
   sc2_callback: process.env.SC2_CALLBACK || 'http://localhost:3030',
-  master_user: process.env.MASTER_USER || 'knowledge',
+  master_user: process.env.MASTER_USER || 'knowledges',
   env: process.env.NODE_ENV,
   port: process.env.PORT,
   mongo: {
