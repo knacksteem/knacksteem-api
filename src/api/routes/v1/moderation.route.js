@@ -20,7 +20,8 @@ const router = express.Router();
  * @apiGroup Moderation Tools
  * @apiPermission moderators & supervisors
  *
- * @apiParam  {String}   access_token   SC2 User's access token
+ * @apiHeader {String}   Authorization  SC2 User's access token
+ *
  * @apiParam  {String}   permlink       Permlink permlink of the post
  * @apiParam  {Boolean}  approved       Whether is the post approved or not
  *
@@ -28,7 +29,7 @@ const router = express.Router();
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated moderators can update a post.
- * @apiError (Unauthorized 404) NotFound Permlink of the post cannot be found in the database.
+ * @apiError (Not Found 404) Not Found Permlink of the post cannot be found in the database.
  */
 router.route('/moderate').post(
   validate(moderate),
@@ -47,14 +48,15 @@ router.route('/moderate').post(
  * @apiGroup Moderation Tools
  * @apiPermission moderators & supervisors
  *
- * @apiParam  {String}   access_token   SC2 User's access token
+ * @apiHeader {String}   Authorization  SC2 User's access token
+ *
  * @apiParam  {String}   permlink       Permlink permlink of the post
  *
  * @apiSuccess {Number}  status         http status of the request
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated moderators can update a post.
- * @apiError (Unauthorized 404) NotFound Permlink of the post cannot be found in the database.
+ * @apiError (Not Found 404) Not Found Permlink of the post cannot be found in the database.
  */
 router.route('/reserve').post(
   validate(reserve),
@@ -73,7 +75,8 @@ router.route('/reserve').post(
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiParam  {String}   access_token   SC2 User's access token
+ * @apiHeader {String}   Authorization  SC2 User's access token
+ *
  * @apiParam  {String}   username       User to ban
  * @apiParam  {String}   banReason      Reason of the ban
  * @apiParam  {Number}   bannedUntil    Timestamp of the ban expiration
@@ -82,7 +85,7 @@ router.route('/reserve').post(
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated supervisors can ban a user.
- * @apiError (Unauthorized 404) NotFound User cannot be found in database.
+ * @apiError (Not Found 404) Not Found User cannot be found in database.
  */
 router.route('/ban').post(
   validate(ban),
@@ -100,14 +103,15 @@ router.route('/ban').post(
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiParam  {String}   access_token   SC2 User's access token
+ * @apiHeader {String}   Authorization  SC2 User's access token
+ *
  * @apiParam  {String}   username       User to ban
  *
  * @apiSuccess {Number}  status         http status of the request
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated supervisors can ban a user.
- * @apiError (Unauthorized 404) NotFound User cannot be found in database.
+ * @apiError (Not Found 404) Not Found User cannot be found in database.
  */
 router.route('/unban').post(
   validate(unban),
@@ -125,14 +129,15 @@ router.route('/unban').post(
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiParam  {String}   access_token   SC2 User's access token
+ * @apiHeader {String}   Authorization  C2 User's access token
+ *
  * @apiParam  {String}   permlink       Permlink of the post
  *
  * @apiSuccess {Number}  status         http status of the request
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only supervisors can reset moderation data
- * @apiError (Unauthorized 404) NotFound Post cannot be found in database.
+ * @apiError (Not Found 404) Not Found Post cannot be found in database.
  */
 router.route('/reset').post(
   validate(reset),
@@ -150,7 +155,8 @@ router.route('/reset').post(
  * @apiGroup Moderation Tools
  * @apiPermission Master Supervisors
  *
- * @apiParam  {String}   access_token   SC2 User's access token
+ * @apiHeader  String}   Authorization  SC2 User's access token
+ *
  * @apiParam  {String}   username       Username to add as surpevisor
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -174,7 +180,8 @@ router.route('/add/supervisor').post(
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiParam  {String}   access_token   SC2 User's access token
+ * @apiHeader {String}   Authorization  SC2 User's access token
+ *
  * @apiParam  {String}   username       Username to add as moderator
  *
  * @apiSuccess {Number}  status         http status of the request
@@ -198,14 +205,15 @@ router.route('/add/moderator').post(
  * @apiGroup Moderation Tools
  * @apiPermission Master Supervisors
  *
- * @apiParam  {String}   access_token   SC2 User's access token
+ * @apiHeader {String}   Authorization  SC2 User's access token
+ *
  * @apiParam  {String}   username       Username to remove as supervisor
  *
  * @apiSuccess {Number}  status         http status of the request
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only master supervisors can remove supervisor
- * @apiError (Not Found 401)    NotFound This user is not a supervisor
+ * @apiError (Not Found 404)    Not Found This user is not a supervisor
  */
 router.route('/remove/supervisor').post(
   validate(member),
@@ -223,14 +231,15 @@ router.route('/remove/supervisor').post(
  * @apiGroup Moderation Tools
  * @apiPermission Supervisors
  *
- * @apiParam  {String}   access_token   SC2 User's access token
+ * @apiHeader {String}   Authorization  SC2 User's access token
+ *
  * @apiParam  {String}   username       Username to remove as moderator
  *
  * @apiSuccess {Number}  status         http status of the request
  * @apiSuccess {String}  message        http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only supervisors can remove moderators
- * @apiError (Not Found 401)    NotFound This user is not a moderator
+ * @apiError (Not Found 404)    Not Found This user is not a moderator
  */
 router.route('/remove/moderator').post(
   validate(member),

@@ -2,6 +2,7 @@ const Post = require('../models/post.model');
 const httpStatus = require('http-status');
 const User = require('../models/user.model');
 const config = require('../../config/vars');
+const helper = require('../utils/Helper');
 
 /**
  * Method to find or create a new user
@@ -66,6 +67,22 @@ exports.moderatePost = async (req, res, next) => {
       });
     }
 
+    // Generate metadata of the notification
+    const metadata = {
+      permlink: post.permlink,
+      category: post.category,
+      author: post.author,
+    };
+
+    // Retrieve back socketio instanace
+    const io = req.app.get('socketio');
+
+    // Decide the type of the notification
+    const notificationType = approved === true || approved === 'true' ? 'POST_APPROVED' : 'POST_NOT_APPROVED';
+
+    // Create and insert the notification in database
+    const notification = await helper.generateNotification(notificationType, post.author, metadata);
+
     // Check if post is reserved and reservation is not expired
     if (post.moderation.reserved === true && Date.now() < post.moderation.reservedUntil) {
       // Check if the current user is the owner of the reservation
@@ -79,6 +96,9 @@ exports.moderatePost = async (req, res, next) => {
           'moderation.moderatedAt': +new Date(),
           'moderation.reserved': false,
         });
+
+        // Deliver notification to client side.
+        io.in(post.author).emit('notification', notification);
 
         // If the post is moderated correctly, send the message to the client.
         return res.status(httpStatus.OK).send({
@@ -102,6 +122,9 @@ exports.moderatePost = async (req, res, next) => {
       'moderation.moderatedBy': moderator,
       'moderation.moderatedAt': +new Date(),
     });
+
+    // Deliver notification to client side.
+    io.in(post.author).emit('notification', notification);
 
     // If the post is moderated correctly, send the message to the client.
     return res.status(httpStatus.OK).send({
@@ -143,6 +166,15 @@ exports.unbanUser = async (req, res, next) => {
     );
 
     if (user) {
+      // Retrieve back socketio instanace
+      const io = req.app.get('socketio');
+
+      // Create and insert the notification in database
+      const notification = await helper.generateNotification('UNBAN', username);
+
+      // Deliver notification to client side.
+      io.in(username).emit('notification', notification);
+
       return res.status(httpStatus.OK).send({
         status: httpStatus.OK,
         message: 'User was unbanned correctly.',
@@ -178,19 +210,30 @@ exports.banUser = async (req, res, next) => {
     // Grab the supervisor username from the locals
     const supervisor = res.locals.username;
 
+    const metadata = {
+      isBanned: true,
+      bannedBy: supervisor,
+      banReason,
+      bannedUntil,
+    };
+
     // Update the post with the new ban data
     const user = await User.findOneAndUpdate(
       { username },
-      {
-        isBanned: true,
-        bannedBy: supervisor,
-        banReason,
-        bannedUntil,
-      },
+      metadata,
     );
 
     // If the user was banned correctly, send the message to the client.
     if (user) {
+      // Retrieve back socketio instanace
+      const io = req.app.get('socketio');
+
+      // Create and insert the notification in database
+      const notification = await helper.generateNotification('BAN', username, metadata);
+
+      // Deliver notification to client side.
+      io.in(username).emit('notification', notification);
+
       return res.status(httpStatus.OK).send({
         status: httpStatus.OK,
         message: 'User was banned correctly.',

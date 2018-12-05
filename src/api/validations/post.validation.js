@@ -4,7 +4,6 @@ module.exports = {
   // POST /v1/posts/create
   create: {
     body: {
-      access_token: Joi.string().min(6).max(512).required(),
       permlink: Joi.string().required(),
       category: Joi.string().required().max(25),
     },
@@ -12,7 +11,6 @@ module.exports = {
   // PUT /v1/posts/update
   update: {
     body: {
-      access_token: Joi.string().min(6).max(512).required(),
       permlink: Joi.string().required(),
       tags: Joi.array().required(),
     },
@@ -25,7 +23,7 @@ module.exports = {
     },
     query: {
       username: Joi.string(),
-      limit: Joi.number(),
+      limit: Joi.number().max(25),
       skip: Joi.number(),
       search: Joi.string(),
     },

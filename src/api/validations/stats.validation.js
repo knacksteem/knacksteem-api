@@ -10,7 +10,7 @@ module.exports = {
     query: {
       username: Joi.string(),
       author: Joi.string(),
-      limit: Joi.number(),
+      limit: Joi.number().max(25),
       skip: Joi.number(),
     },
   },
@@ -20,7 +20,7 @@ module.exports = {
       username: Joi.string(),
       search: Joi.string(),
       banned: Joi.boolean(),
-      limit: Joi.number(),
+      limit: Joi.number().max(25),
       skip: Joi.number(),
     },
   },

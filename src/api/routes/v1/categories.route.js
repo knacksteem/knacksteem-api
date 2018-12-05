@@ -33,7 +33,8 @@ router.route('/').get(controller.getCategories);
  * @apiGroup Categories
  * @apiPermission supervisor
  *
- * @apiParam   {String}   access_token      SC2 User's access token
+ * @apiHeader  {String}   Authorization     SC2 User's access token
+ *
  * @apiParam   {String}   name              Name of the category
  *
  * @apiSuccess {Number}   status            http status response
@@ -51,14 +52,15 @@ router.route('/').post(validate(create), sc2Middleware, checkUserMiddleware, che
  * @apiGroup Categories
  * @apiPermission Ultimate Supervisor
  *
- * @apiParam   {String}   access_token      SC2 User's access token
+ * @apiHeader  {String}   Authorization     SC2 User's access token
+ *
  * @apiParam   {String}   key               Key of the category
  *
  * @apiSuccess {Number}   status            http status response
  * @apiSuccess {String}   message           http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated master supervisors can delete a category.
- * @apiError (Unauthorized 404) NotFound Key of the category cannot be found in database.
+ * @apiError (Not Found 404) NotFound Key of the category cannot be found in database.
  */
 router.route('/').delete(
   validate(deleteCat),
@@ -77,7 +79,8 @@ router.route('/').delete(
  * @apiGroup Categories
  * @apiPermission Ultimate Supervisor
  *
- * @apiParam   {String}   access_token      SC2 User's access token
+ * @apiHeader  {String}   Authorization     SC2 User's access token
+ *
  * @apiParam   {String}   key               Key of the category
  * @apiParam   {String}   newKey            New key of the category
  * @apiParam   {String}   newName           New name of the category
@@ -86,7 +89,7 @@ router.route('/').delete(
  * @apiSuccess {String}   message           http return message
  *
  * @apiError (Unauthorized 401) Unauthorized Only authenticated master supervisors can edit a category.
- * @apiError (Unauthorized 404) NotFound Key of the category cannot be found in database.
+ * @apiError (Not Found 404) NotFound Key of the category cannot be found in database.
  */
 router.route('/').put(
   validate(editCat),

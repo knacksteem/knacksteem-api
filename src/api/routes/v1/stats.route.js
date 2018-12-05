@@ -16,29 +16,29 @@ const router = express.Router();
  * @apiParam   {Number}  [limit=25]     How many post to query
  * @apiParam   {Number}  [skip=0]       How many post to skip in the query
  *
- * @apiSuccess {Number}     status                       		http status response
- * @apiSuccess {Object[]}   results                      		Array with the results
- * @apiSuccess {String}     results.title                		Title of the post
- * @apiSuccess {String}     results.description          		Description of the post
- * @apiSuccess {String}     results.coverImage           		Cover image of the post
- * @apiSuccess {String}     results.author               		Author of the post
- * @apiSuccess {Number}     results.authorReputation     		Reputation of the author
- * @apiSuccess {String}     results.authorImage          		Profile image of the author of the post
- * @apiSuccess {String}     results.permlink             		Permlink of the post
- * @apiSuccess {Number}     results.postedAt             		When was this post posted
- * @apiSuccess {String}     results.category             		Category of the post
- * @apiSuccess {String[]}   results.tags                 		Tags of the post
- * @apiSuccess {Object}     results.moderation           		Moderation info of the post
+ * @apiSuccess {Number}     status                              http status response
+ * @apiSuccess {Object[]}   results                             Array with the results
+ * @apiSuccess {String}     results.title                       Title of the post
+ * @apiSuccess {String}     results.description                 Description of the post
+ * @apiSuccess {String}     results.coverImage                  Cover image of the post
+ * @apiSuccess {String}     results.author                      Author of the post
+ * @apiSuccess {Number}     results.authorReputation            Reputation of the author
+ * @apiSuccess {String}     results.authorImage                 Profile image of the author of the post
+ * @apiSuccess {String}     results.permlink                    Permlink of the post
+ * @apiSuccess {Number}     results.postedAt                    When was this post posted
+ * @apiSuccess {String}     results.category                    Category of the post
+ * @apiSuccess {String[]}   results.tags                        Tags of the post
+ * @apiSuccess {Object}     results.moderation                  Moderation info of the post
  * @apiSuccess {Boolean}    results.moderation.reserved         Has it been reserved
  * @apiSuccess {String}     results.moderation.reservedBy       Username reserved the post
- * @apiSuccess {Number}     results.moderation.reservedUntil 	Time until post is reserved
+ * @apiSuccess {Number}     results.moderation.reservedUntil    Time until post is reserved
  * @apiSuccess {Boolean}    results.moderation.moderated        Has it been moderated
  * @apiSuccess {String}     results.moderation.moderatedBy      Username moderated the post
  * @apiSuccess {Number}     results.moderation.moderatedAt      Time the post was moderated
  * @apiSuccess {Boolean}    results.moderation.approved         Has it been approved
- * @apiSuccess {Number}     results.votesCount           		Votes count for this post
- * @apiSuccess {Number}     results.commentsCount        		Comments count for this post
- * @apiSuccess {Number}     count                        		How many posts were returned
+ * @apiSuccess {Number}     results.votesCount                  Votes count for this post
+ * @apiSuccess {Number}     results.commentsCount               Comments count for this post
+ * @apiSuccess {Number}     count                               How many posts were returned
  */
 router.route('/moderation/pending').get(validate(posts), controller.sendStats('moderation_pending'));
 
@@ -54,29 +54,29 @@ router.route('/moderation/pending').get(validate(posts), controller.sendStats('m
  * @apiParam   {Number}  [limit=25]     How many post to query
  * @apiParam   {Number}  [skip=0]       How many post to skip in the query
  *
- * @apiSuccess {Number}     status                       		http status response
- * @apiSuccess {Object[]}   results                      		Array with the results
- * @apiSuccess {String}     results.title                		Title of the post
- * @apiSuccess {String}     results.description          		Description of the post
- * @apiSuccess {String}     results.coverImage           		Cover image of the post
- * @apiSuccess {String}     results.author               		Author of the post
- * @apiSuccess {Number}     results.authorReputation     		Reputation of the author
- * @apiSuccess {String}     results.authorImage          		Profile image of the author of the post
- * @apiSuccess {String}     results.permlink             		Permlink of the post
- * @apiSuccess {Number}     results.postedAt             		When was this post posted
- * @apiSuccess {String}     results.category             		Category of the post
- * @apiSuccess {String[]}   results.tags                 		Tags of the post
- * @apiSuccess {Object}     results.moderation           		Moderation info of the post
+ * @apiSuccess {Number}     status                              http status response
+ * @apiSuccess {Object[]}   results                             Array with the results
+ * @apiSuccess {String}     results.title                       Title of the post
+ * @apiSuccess {String}     results.description                 Description of the post
+ * @apiSuccess {String}     results.coverImage                  Cover image of the post
+ * @apiSuccess {String}     results.author                      Author of the post
+ * @apiSuccess {Number}     results.authorReputation            Reputation of the author
+ * @apiSuccess {String}     results.authorImage                 Profile image of the author of the post
+ * @apiSuccess {String}     results.permlink                    Permlink of the post
+ * @apiSuccess {Number}     results.postedAt                    When was this post posted
+ * @apiSuccess {String}     results.category                    Category of the post
+ * @apiSuccess {String[]}   results.tags                        Tags of the post
+ * @apiSuccess {Object}     results.moderation                  Moderation info of the post
  * @apiSuccess {Boolean}    results.moderation.reserved         Has it been reserved
  * @apiSuccess {String}     results.moderation.reservedBy       Username reserved the post
- * @apiSuccess {Number}     results.moderation.reservedUntil 	Time until post is reserved
+ * @apiSuccess {Number}     results.moderation.reservedUntil    Time until post is reserved
  * @apiSuccess {Boolean}    results.moderation.moderated        Has it been moderated
  * @apiSuccess {String}     results.moderation.moderatedBy      Username moderated the post
  * @apiSuccess {Number}     results.moderation.moderatedAt      Time the post was moderated
  * @apiSuccess {Boolean}    results.moderation.approved         Has it been approved
- * @apiSuccess {Number}     results.votesCount           		Votes count for this post
- * @apiSuccess {Number}     results.commentsCount        		Comments count for this post
- * @apiSuccess {Number}     count                        		How many posts were returned
+ * @apiSuccess {Number}     results.votesCount                  Votes count for this post
+ * @apiSuccess {Number}     results.commentsCount               Comments count for this post
+ * @apiSuccess {Number}     count                               How many posts were returned
  */
 router.route('/moderation/approved').get(validate(posts), controller.sendStats('moderation_approved'));
 
@@ -92,29 +92,29 @@ router.route('/moderation/approved').get(validate(posts), controller.sendStats('
  * @apiParam   {Number}  [limit=25]     How many post to query
  * @apiParam   {Number}  [skip=0]       How many post to skip in the query
  *
- * @apiSuccess {Number}     status                       		http status response
- * @apiSuccess {Object[]}   results                      		Array with the results
- * @apiSuccess {String}     results.title                		Title of the post
- * @apiSuccess {String}     results.description          		Description of the post
- * @apiSuccess {String}     results.coverImage           		Cover image of the post
- * @apiSuccess {String}     results.author               		Author of the post
- * @apiSuccess {Number}     results.authorReputation     		Reputation of the author
- * @apiSuccess {String}     results.authorImage          		Profile image of the author of the post
- * @apiSuccess {String}     results.permlink             		Permlink of the post
- * @apiSuccess {Number}     results.postedAt             		When was this post posted
- * @apiSuccess {String}     results.category             		Category of the post
- * @apiSuccess {String[]}   results.tags                 		Tags of the post
- * @apiSuccess {Object}     results.moderation           		Moderation info of the post
+ * @apiSuccess {Number}     status                              http status response
+ * @apiSuccess {Object[]}   results                             Array with the results
+ * @apiSuccess {String}     results.title                       Title of the post
+ * @apiSuccess {String}     results.description                 Description of the post
+ * @apiSuccess {String}     results.coverImage                  Cover image of the post
+ * @apiSuccess {String}     results.author                      Author of the post
+ * @apiSuccess {Number}     results.authorReputation            Reputation of the author
+ * @apiSuccess {String}     results.authorImage                 Profile image of the author of the post
+ * @apiSuccess {String}     results.permlink                    Permlink of the post
+ * @apiSuccess {Number}     results.postedAt                    When was this post posted
+ * @apiSuccess {String}     results.category                    Category of the post
+ * @apiSuccess {String[]}   results.tags                        Tags of the post
+ * @apiSuccess {Object}     results.moderation                  Moderation info of the post
  * @apiSuccess {Boolean}    results.moderation.reserved         Has it been reserved
  * @apiSuccess {String}     results.moderation.reservedBy       Username reserved the post
- * @apiSuccess {Number}     results.moderation.reservedUntil 	Time until post is reserved
+ * @apiSuccess {Number}     results.moderation.reservedUntil    Time until post is reserved
  * @apiSuccess {Boolean}    results.moderation.moderated        Has it been moderated
  * @apiSuccess {String}     results.moderation.moderatedBy      Username moderated the post
  * @apiSuccess {Number}     results.moderation.moderatedAt      Time the post was moderated
  * @apiSuccess {Boolean}    results.moderation.approved         Has it been approved
- * @apiSuccess {Number}     results.votesCount           		Votes count for this post
- * @apiSuccess {Number}     results.commentsCount        		Comments count for this post
- * @apiSuccess {Number}     count                        		How many posts were returned
+ * @apiSuccess {Number}     results.votesCount                  Votes count for this post
+ * @apiSuccess {Number}     results.commentsCount               Comments count for this post
+ * @apiSuccess {Number}     count                               How many posts were returned
  */
 router.route('/moderation/moderated').get(validate(posts), controller.sendStats('moderated'));
 
@@ -130,29 +130,29 @@ router.route('/moderation/moderated').get(validate(posts), controller.sendStats(
  * @apiParam   {Number}  [limit=25]     How many post to query
  * @apiParam   {Number}  [skip=0]       How many post to skip in the query
  *
- * @apiSuccess {Number}     status                       		http status response
- * @apiSuccess {Object[]}   results                      		Array with the results
- * @apiSuccess {String}     results.title                		Title of the post
- * @apiSuccess {String}     results.description          		Description of the post
- * @apiSuccess {String}     results.coverImage           		Cover image of the post
- * @apiSuccess {String}     results.author               		Author of the post
- * @apiSuccess {Number}     results.authorReputation     		Reputation of the author
- * @apiSuccess {String}     results.authorImage          		Profile image of the author of the post
- * @apiSuccess {String}     results.permlink             		Permlink of the post
- * @apiSuccess {Number}     results.postedAt             		When was this post posted
- * @apiSuccess {String}     results.category             		Category of the post
- * @apiSuccess {String[]}   results.tags                 		Tags of the post
- * @apiSuccess {Object}     results.moderation           		Moderation info of the post
+ * @apiSuccess {Number}     status                              http status response
+ * @apiSuccess {Object[]}   results                             Array with the results
+ * @apiSuccess {String}     results.title                       Title of the post
+ * @apiSuccess {String}     results.description                 Description of the post
+ * @apiSuccess {String}     results.coverImage                  Cover image of the post
+ * @apiSuccess {String}     results.author                      Author of the post
+ * @apiSuccess {Number}     results.authorReputation            Reputation of the author
+ * @apiSuccess {String}     results.authorImage                 Profile image of the author of the post
+ * @apiSuccess {String}     results.permlink                    Permlink of the post
+ * @apiSuccess {Number}     results.postedAt                    When was this post posted
+ * @apiSuccess {String}     results.category                    Category of the post
+ * @apiSuccess {String[]}   results.tags                        Tags of the post
+ * @apiSuccess {Object}     results.moderation                  Moderation info of the post
  * @apiSuccess {Boolean}    results.moderation.reserved         Has it been reserved
  * @apiSuccess {String}     results.moderation.reservedBy       Username reserved the post
- * @apiSuccess {Number}     results.moderation.reservedUntil 	Time until post is reserved
+ * @apiSuccess {Number}     results.moderation.reservedUntil    Time until post is reserved
  * @apiSuccess {Boolean}    results.moderation.moderated        Has it been moderated
  * @apiSuccess {String}     results.moderation.moderatedBy      Username moderated the post
  * @apiSuccess {Number}     results.moderation.moderatedAt      Time the post was moderated
  * @apiSuccess {Boolean}    results.moderation.approved         Has it been approved
- * @apiSuccess {Number}     results.votesCount           		Votes count for this post
- * @apiSuccess {Number}     results.commentsCount        		Comments count for this post
- * @apiSuccess {Number}     count                        		How many posts were returned
+ * @apiSuccess {Number}     results.votesCount                  Votes count for this post
+ * @apiSuccess {Number}     results.commentsCount               Comments count for this post
+ * @apiSuccess {Number}     count                               How many posts were returned
  */
 router.route('/moderation/not-approved').get(validate(posts), controller.sendStats('moderation_not_approved'));
 
@@ -168,29 +168,29 @@ router.route('/moderation/not-approved').get(validate(posts), controller.sendSta
  * @apiParam   {Number}  [limit=25]     How many post to query
  * @apiParam   {Number}  [skip=0]       How many post to skip in the query
  *
- * @apiSuccess {Number}     status                       		http status response
- * @apiSuccess {Object[]}   results                      		Array with the results
- * @apiSuccess {String}     results.title                		Title of the post
- * @apiSuccess {String}     results.description          		Description of the post
- * @apiSuccess {String}     results.coverImage           		Cover image of the post
- * @apiSuccess {String}     results.author               		Author of the post
- * @apiSuccess {Number}     results.authorReputation     		Reputation of the author
- * @apiSuccess {String}     results.authorImage          		Profile image of the author of the post
- * @apiSuccess {String}     results.permlink             		Permlink of the post
- * @apiSuccess {Number}     results.postedAt             		When was this post posted
- * @apiSuccess {String}     results.category             		Category of the post
- * @apiSuccess {String[]}   results.tags                 		Tags of the post
- * @apiSuccess {Object}     results.moderation           		Moderation info of the post
+ * @apiSuccess {Number}     status                              http status response
+ * @apiSuccess {Object[]}   results                             Array with the results
+ * @apiSuccess {String}     results.title                       Title of the post
+ * @apiSuccess {String}     results.description                 Description of the post
+ * @apiSuccess {String}     results.coverImage                  Cover image of the post
+ * @apiSuccess {String}     results.author                      Author of the post
+ * @apiSuccess {Number}     results.authorReputation            Reputation of the author
+ * @apiSuccess {String}     results.authorImage                 Profile image of the author of the post
+ * @apiSuccess {String}     results.permlink                    Permlink of the post
+ * @apiSuccess {Number}     results.postedAt                    When was this post posted
+ * @apiSuccess {String}     results.category                    Category of the post
+ * @apiSuccess {String[]}   results.tags                        Tags of the post
+ * @apiSuccess {Object}     results.moderation                  Moderation info of the post
  * @apiSuccess {Boolean}    results.moderation.reserved         Has it been reserved
  * @apiSuccess {String}     results.moderation.reservedBy       Username reserved the post
- * @apiSuccess {Number}     results.moderation.reservedUntil 	Time until post is reserved
+ * @apiSuccess {Number}     results.moderation.reservedUntil    Time until post is reserved
  * @apiSuccess {Boolean}    results.moderation.moderated        Has it been moderated
  * @apiSuccess {String}     results.moderation.moderatedBy      Username moderated the post
  * @apiSuccess {Number}     results.moderation.moderatedAt      Time the post was moderated
  * @apiSuccess {Boolean}    results.moderation.approved         Has it been approved
- * @apiSuccess {Number}     results.votesCount           		Votes count for this post
- * @apiSuccess {Number}     results.commentsCount        		Comments count for this post
- * @apiSuccess {Number}     count                        		How many posts were returned
+ * @apiSuccess {Number}     results.votesCount                  Votes count for this post
+ * @apiSuccess {Number}     results.commentsCount               Comments count for this post
+ * @apiSuccess {Number}     count                               How many posts were returned
  */
 router.route('/moderation/reserved').get(validate(posts), controller.sendStats('reserved'));
 
@@ -208,29 +208,29 @@ router.route('/moderation/reserved').get(validate(posts), controller.sendStats('
  * @apiParam   {Boolean} [banned]       Banned or not banned users
  * @apiParam   {String}  [search]       Find users including this text or similar text
  *
- * @apiSuccess {Number}     status                       		http status response
- * @apiSuccess {Object[]}   results                      		Array with the results
- * @apiSuccess {String}     results.title                		Title of the post
- * @apiSuccess {String}     results.description          		Description of the post
- * @apiSuccess {String}     results.coverImage           		Cover image of the post
- * @apiSuccess {String}     results.author               		Author of the post
- * @apiSuccess {Number}     results.authorReputation     		Reputation of the author
- * @apiSuccess {String}     results.authorImage          		Profile image of the author of the post
- * @apiSuccess {String}     results.permlink             		Permlink of the post
- * @apiSuccess {Number}     results.postedAt             		When was this post posted
- * @apiSuccess {String}     results.category             		Category of the post
- * @apiSuccess {String[]}   results.tags                 		Tags of the post
- * @apiSuccess {Object}     results.moderation           		Moderation info of the post
+ * @apiSuccess {Number}     status                              http status response
+ * @apiSuccess {Object[]}   results                             Array with the results
+ * @apiSuccess {String}     results.title                       Title of the post
+ * @apiSuccess {String}     results.description                 Description of the post
+ * @apiSuccess {String}     results.coverImage                  Cover image of the post
+ * @apiSuccess {String}     results.author                      Author of the post
+ * @apiSuccess {Number}     results.authorReputation            Reputation of the author
+ * @apiSuccess {String}     results.authorImage                 Profile image of the author of the post
+ * @apiSuccess {String}     results.permlink                    Permlink of the post
+ * @apiSuccess {Number}     results.postedAt                    When was this post posted
+ * @apiSuccess {String}     results.category                    Category of the post
+ * @apiSuccess {String[]}   results.tags                        Tags of the post
+ * @apiSuccess {Object}     results.moderation                  Moderation info of the post
  * @apiSuccess {Boolean}    results.moderation.reserved         Has it been reserved
  * @apiSuccess {String}     results.moderation.reservedBy       Username reserved the post
- * @apiSuccess {Number}     results.moderation.reservedUntil 	Time until post is reserved
+ * @apiSuccess {Number}     results.moderation.reservedUntil    Time until post is reserved
  * @apiSuccess {Boolean}    results.moderation.moderated        Has it been moderated
  * @apiSuccess {String}     results.moderation.moderatedBy      Username moderated the post
  * @apiSuccess {Number}     results.moderation.moderatedAt      Time the post was moderated
  * @apiSuccess {Boolean}    results.moderation.approved         Has it been approved
- * @apiSuccess {Number}     results.votesCount           		Votes count for this post
- * @apiSuccess {Number}     results.commentsCount        		Comments count for this post
- * @apiSuccess {Number}     count                        		How many posts were returned
+ * @apiSuccess {Number}     results.votesCount                  Votes count for this post
+ * @apiSuccess {Number}     results.commentsCount               Comments count for this post
+ * @apiSuccess {Number}     count                               How many posts were returned
  */
 router.route('/users').get(validate(users), controller.allUsers);
 
