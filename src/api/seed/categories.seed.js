@@ -2,19 +2,15 @@ const Category = require('../models/category.model');
 
 // Batch of initial categories
 const initialCategories = [
-  { key: 'vlog', name: 'VLog' },
-  { key: 'graphics', name: 'Graphics' },
+  { key: 'gaming', name: 'Gaming' },
+  { key: 'documentary', name: 'Documentary' },
   { key: 'art', name: 'Art' },
-  { key: 'knack', name: 'Knack' },
-  { key: 'onealtruism', name: 'One Altruism' },
-  { key: 'music', name: 'Music' },
+  { key: 'altruism', name: 'Altruism' },
+  { key: 'techtrends', name: 'Tech trends' },
   { key: 'humor', name: 'Joke/Humor' },
-  { key: 'inspiring', name: 'Inspiring' },
-  { key: 'visibility', name: 'Visibility' },
-  { key: 'news', name: 'News' },
-  { key: 'quotes', name: 'Quotes' },
-  { key: 'techtrends', name: 'Tech Trends' },
-  { key: 'blogposts', name: 'Blog Posts' },
+  { key: 'music', name: 'Music' },
+  { key: 'diy', name: 'DIY' },
+  { key: 'fashion', name: 'Fashion' },
 ];
 
 /**
