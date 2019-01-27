@@ -54,18 +54,14 @@ exports.getAccountDetails = async (accountName) => {
 
 /**
  * Calculates remaining time in seconds for VP to reach 100%.
+ * 432000 sec = 5 days -- Recharged amount per 24 hours is 20% 5 * 20 = 100%
+ * 4320 sec = 1.2 hours -- Recharged amount per hour is 1.2
  * @param {Number} currentVp: Current voting power amount.
  * @public
  * @author Jayser Mendez.
  * @returns A number determining the amount in seconds needed to reach 100% VP.
  */
-exports.calculateNextRoundTime = (currentVp) => {
-  // 432000 sec = 5 days -- Recharged amount per 24 hours is 20% 5 * 20 = 100%
-  // 4320 sec = 1.2 hours -- Recharged amount per hour is 1.2
-  const timeToRechargeSeconds = ((100 - currentVp) * 4320);
-
-  return timeToRechargeSeconds;
-};
+exports.calculateNextRoundTime = currentVp => ((100 - currentVp) * 4320);
 
 /**
  * Schedules a next round with a given time

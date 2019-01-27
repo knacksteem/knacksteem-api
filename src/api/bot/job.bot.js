@@ -18,8 +18,8 @@ exports.startRound = async (round) => {
     /**
      * Determine the current voting power
      */
-    const userData = await utils.getAccountDetails('utopian-io');
-    const currentVp = utils.getVotingPower(userData[0]);
+    const userData = await utils.getAccountDetails(config.botAccount);
+    let currentVp = utils.getVotingPower(userData[0]);
 
     logger.info(`Current voting power: ${currentVp}`);
 
@@ -55,17 +55,35 @@ exports.startRound = async (round) => {
       return;
     }
 
-    posts.map(async (post) => {
-      // Check how much VP will take this vote
+    // eslint-disable-next-line no-restricted-syntax
+    for (const post of posts) {
+      const usage = ((post.weight / 100.0) * 0.02) * currentVp;
+
+      if (currentVp - usage < 80.0) {
+        // Stop the loop
+        break;
+      }
 
       // Process each post
-      processPost(post);
-    });
+      // eslint-disable-next-line no-await-in-loop
+      await processPost(post);
 
-    // After done, re-schedule a job
-    const t = new Date();
-    t.setSeconds(t.getSeconds() + 10);
-    scheduler.scheduleNextRound(t);
+      // Refresh current voting power
+      currentVp -= usage;
+    }
+
+    /**
+     * Recalculate new time to recharge, schedule, and cancel.
+     */
+    const newTimeToRecharge = utils.calculateNextRoundTime(currentVp);
+
+    logger.info(`Final voting power is ${currentVp}`);
+    logger.info(`Next round will start in ${Math.floor(newTimeToRecharge / 60)} minutes`);
+
+    // Add a margin of 5 more seconds
+    rescheduleAndCancel(newTimeToRecharge + 5, 's', round);
+
+    return;
   } catch (err) {
     logger.error(err);
   }
@@ -95,6 +113,7 @@ const getPostsQueue = async () => {
 const processPost = async (post) => {
   try {
     // process post
+    console.log(post.weight);
   } catch (err) {
     logger.error(err);
   }
