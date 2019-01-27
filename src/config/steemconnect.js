@@ -1,4 +1,4 @@
-const sc2 = require('sc2-sdk');
+const sc2 = require('steemconnect');
 const config = require('./vars');
 
 const api = sc2.Initialize({

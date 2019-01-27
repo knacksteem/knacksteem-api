@@ -6,6 +6,7 @@ const options = {
 };
 
 const client = createClient('https://api.steemit.com', options);
+
 client.sendAsync = (message, params) =>
   new Promise((resolve, reject) => {
     client.send(message, params, (err, result) => {
