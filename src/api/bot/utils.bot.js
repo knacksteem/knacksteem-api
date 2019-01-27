@@ -60,13 +60,22 @@ exports.getAccountDetails = async (accountName) => {
  * @returns A number determining the amount in seconds needed to reach 100% VP.
  */
 exports.calculateNextRoundTime = (currentVp) => {
+  // 432000 sec = 5 days -- Recharged amount per 24 hours is 20% 5 * 20 = 100%
+  // 4320 sec = 1.2 hours -- Recharged amount per hour is 1.2
+
   const missingVp = 100 - currentVp;
-  // 432000 sec = 5 days
-  const timeToRechargeSeconds = ((missingVp * 432000) * 100) / 10000;
+  const timeToRechargeSeconds = (missingVp * 4320);
 
   return timeToRechargeSeconds;
 };
 
+/**
+ * Schedules a next round with a given time
+ * @param {number} time: Seconds, minutes, or hours to the next schedule.
+ * @param {string} format: 'h' for hour, 'm' for minute, 's' for second.
+ * @public
+ * @author Jayser Mendez
+ */
 exports.scheduleNextRound = (time, format) => {
   const nextScheduleDate = moment(new Date()).add(time, format).toDate();
   scheduler.scheduleNextRound(nextScheduleDate);

@@ -32,7 +32,7 @@ exports.startRound = async (round) => {
     /**
      * Determine the current voting power
      */
-    const userData = await utils.getAccountDetails(config.botAccount);
+    const userData = await utils.getAccountDetails('utopian-io');
     const currentVp = utils.getVotingPower(userData[0]);
 
     logger.info(`Current voting power: ${currentVp}`);
@@ -43,14 +43,14 @@ exports.startRound = async (round) => {
       /**
        * Calculate remaining time to reach 100%
        */
-      const timeToRechargeMinutes = Math.floor(utils.calculateNextRoundTime(currentVp) / 60);
+      const timeToRecharge = utils.calculateNextRoundTime(currentVp);
 
-      logger.info(`Next round will start in ${timeToRechargeMinutes} minutes`);
+      logger.info(`Next round will start in ${Math.floor(timeToRecharge / 60)} minutes`);
 
       /**
        * schedule next round, cancel current round, and stop the function.
        */
-      utils.scheduleNextRound(timeToRechargeMinutes, 'm');
+      utils.scheduleNextRound(timeToRecharge, 's');
       round.cancel();
       return;
     }
