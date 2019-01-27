@@ -5,6 +5,7 @@ const config = require('../../config/vars');
 const helper = require('../utils/Helper');
 const BotQueue = require('../models/queue.model');
 const logger = require('../../config/logger');
+const Category = require('../models/category.model');
 
 /**
  * Method to find or create a new user
@@ -42,12 +43,22 @@ const createUser = async (username, next) => {
   }
 };
 
+/**
+ * Insert post into the bot queue.
+ * @param {Object} post: Post object.
+ * @param {number} score: Moderation score.
+ * @private
+ * @author Jayser Mendez
+ */
 const createQueuePost = async (post, score) => {
   try {
+    const category = await Category.findOne({ name: post.category });
+    const weight = (score * category.scoreCap) / 100;
+
     const queuePost = new BotQueue({
       permalink: post.permlink,
       author: post.author,
-      weight: score, // to be determined
+      weight,
     });
 
     await BotQueue.create(queuePost);
