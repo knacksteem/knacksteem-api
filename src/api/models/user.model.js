@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const timestamps = require('mongoose-timestamp-date-unix');
+
+mongoose.set('useCreateIndex', true);
+
 /**
  * User Schema
  * @private

@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+mongoose.set('useCreateIndex', true);
+
 /**
  * Category Schema
  * @author Jayser Mendez

@@ -20,7 +20,7 @@ const initialCategories = [
  */
 exports.seedCategories = async () => {
   try {
-    const count = await Category.count();
+    const count = await Category.countDocuments();
     // If this is the first time running, insert the categories
     if (count === 0) {
       initialCategories.map(async (category) => {

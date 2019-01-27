@@ -6,6 +6,7 @@ const fs = require('fs');
 const SocketIO = require('socket.io');
 const sc2 = require('./config/steemconnect');
 const botScheduler = require('./api/bot/scheduler.bot');
+const logger = require('./config/logger');
 
 // open mongoose connection
 mongoose.connect();
@@ -22,7 +23,7 @@ if (env === 'production') {
   server = https.createServer(options, app);
   server.listen(port);
 } else {
-  server = app.listen(port, () => console.info(`server started on port ${port} (${env})`));
+  server = app.listen(port, () => logger.info(`server started on port ${port} (${env})`));
 }
 
 // Initialize Socket Server over the same port
