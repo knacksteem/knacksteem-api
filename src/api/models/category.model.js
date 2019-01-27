@@ -18,7 +18,7 @@ const categorySchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  weight: {
+  scoreCap: {
     type: Number,
     required: true,
     trim: true,

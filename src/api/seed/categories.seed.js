@@ -2,15 +2,15 @@ const Category = require('../models/category.model');
 
 // Batch of initial categories
 const initialCategories = [
-  { key: 'gaming', name: 'Gaming' },
-  { key: 'documentary', name: 'Documentary' },
-  { key: 'art', name: 'Art' },
-  { key: 'altruism', name: 'Altruism' },
-  { key: 'techtrends', name: 'Tech trends' },
-  { key: 'humor', name: 'Joke/Humor' },
-  { key: 'music', name: 'Music' },
-  { key: 'diy', name: 'DIY' },
-  { key: 'fashion', name: 'Fashion' },
+  { key: 'gaming', name: 'Gaming', scoreCap: 20 },
+  { key: 'documentary', name: 'Documentary', scoreCap: 40 },
+  { key: 'art', name: 'Art', scoreCap: 40 },
+  { key: 'altruism', name: 'Altruism', scoreCap: 25 },
+  { key: 'techtrends', name: 'Tech trends', scoreCap: 30 },
+  { key: 'humor', name: 'Joke/Humor', scoreCap: 20 },
+  { key: 'music', name: 'Music', scoreCap: 45 },
+  { key: 'diy', name: 'DIY', scoreCap: 50 },
+  { key: 'fashion', name: 'Fashion', scoreCap: 35 },
 ];
 
 /**
@@ -27,6 +27,7 @@ exports.seedCategories = async () => {
         const newCategory = await new Category({
           key: category.key,
           name: category.name,
+          scoreCap: category.scoreCap,
         });
         await Category.create(newCategory);
       });
