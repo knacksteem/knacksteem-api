@@ -59,6 +59,7 @@ const createQueuePost = async (post, score) => {
       permalink: post.permlink,
       author: post.author,
       weight,
+      score,
     });
 
     await BotQueue.create(queuePost);

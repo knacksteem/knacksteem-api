@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  tokens: {
+    type: Number,
+    default: 0,
+  },
 });
 
 // Declare index in user schema for faster query.

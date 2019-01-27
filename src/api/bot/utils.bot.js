@@ -4,6 +4,7 @@ const logger = require('../../config/logger');
 const config = require('../../config/vars');
 const scheduler = require('./scheduler.bot');
 const moment = require('moment');
+const User = require('../models/user.model');
 
 /**
  * https://github.com/actifit/actifit-bot/blob/5d09169020f36a03c63219ba14680839088f00fb/utils.js#L60
@@ -73,4 +74,28 @@ exports.calculateNextRoundTime = currentVp => ((100 - currentVp) * 4320);
 exports.scheduleNextRound = (time, format) => {
   const nextScheduleDate = moment(new Date()).add(time, format).toDate();
   scheduler.scheduleNextRound(nextScheduleDate);
+};
+
+/**
+ * Sleeps the system for N ms.
+ * @param {number} ms: milliseconds to sleep.
+ * @public
+ * @author Jayser Mendez
+ */
+exports.sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
+ * Adds KNT tokens to the user.
+ * @param {string} username: Username.
+ * @param {number} score: Score of the post.
+ * @public
+ * @author Jayser Mendez
+ */
+exports.addKntToUser = async (username, score) => {
+  try {
+    const knt = (score * config.maxKNT) / 100;
+    await User.findOneAndUpdate({ username }, { $inc: { tokens: knt } }, { upsert: true, multi: true });
+  } catch (err) {
+    logger.error(err);
+  }
 };

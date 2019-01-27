@@ -1,5 +1,5 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-unused-vars */
-const scheduler = require('./scheduler.bot');
 const utils = require('./utils.bot');
 const logger = require('../../config/logger');
 const config = require('../../config/vars');
@@ -60,16 +60,17 @@ exports.startRound = async (round) => {
       const usage = ((post.weight / 100.0) * 0.02) * currentVp;
 
       if (currentVp - usage < 80.0) {
-        // Stop the loop
         break;
       }
 
       // Process each post
-      // eslint-disable-next-line no-await-in-loop
       await processPost(post);
 
       // Refresh current voting power
       currentVp -= usage;
+
+      // Wait three seconds before continue
+      await utils.sleep(3000);
     }
 
     /**
@@ -114,6 +115,9 @@ const processPost = async (post) => {
   try {
     // process post
     console.log(post.weight);
+
+    // Add KNT to user
+    await utils.addKntToUser(post.author, post.score);
   } catch (err) {
     logger.error(err);
   }

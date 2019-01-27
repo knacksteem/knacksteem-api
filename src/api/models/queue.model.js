@@ -24,6 +24,11 @@ const queueSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  score: {
+    type: Number,
+    required: true,
+    trim: true,
+  },
 });
 
 // Declare index in bot queue schema for faster query.
