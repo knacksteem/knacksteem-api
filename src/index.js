@@ -61,7 +61,7 @@ io.on('connection', (socket) => {
 app.set('socketio', io);
 
 // Schedule initial bot run
-botScheduler.scheduleNextRound();
+botScheduler.scheduleNextRound(new Date(new Date().getTime() + 10000));
 
 /**
 * Exports express
