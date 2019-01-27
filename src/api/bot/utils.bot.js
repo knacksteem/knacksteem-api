@@ -2,6 +2,8 @@
 const axios = require('axios');
 const logger = require('../../config/logger');
 const config = require('../../config/vars');
+const scheduler = require('./scheduler.bot');
+const moment = require('moment');
 
 /**
  * https://github.com/actifit/actifit-bot/blob/5d09169020f36a03c63219ba14680839088f00fb/utils.js#L60
@@ -63,4 +65,9 @@ exports.calculateNextRoundTime = (currentVp) => {
   const timeToRechargeSeconds = ((missingVp * 432000) * 100) / 10000;
 
   return timeToRechargeSeconds;
+};
+
+exports.scheduleNextRound = (time, format) => {
+  const nextScheduleDate = moment(new Date()).add(time, format).toDate();
+  scheduler.scheduleNextRound(nextScheduleDate);
 };

@@ -3,8 +3,28 @@ const scheduler = require('./scheduler.bot');
 const utils = require('./utils.bot');
 const logger = require('../../config/logger');
 const config = require('../../config/vars');
-const moment = require('moment');
+const botQueue = require('../models/queue.model');
 
+/**
+ * Gets all posts into the bot queue.
+ * @private
+ * @author Jayser Mendez
+ * @returns An array with the posts.
+ */
+const getPostsQueue = async () => {
+  try {
+    return await botQueue.find().sort({ createdAt: 1 });
+  } catch (err) {
+    logger.error(err);
+    return [];
+  }
+};
+
+/**
+ * Starts the voting round.
+ * @param {node-schedule} round: node-schedule object
+ * @public
+ */
 exports.startRound = async (round) => {
   try {
     logger.info('Starting voting round');
@@ -12,8 +32,9 @@ exports.startRound = async (round) => {
     /**
      * Determine the current voting power
      */
-    const userData = await utils.getAccountDetails('utopian-io');
+    const userData = await utils.getAccountDetails(config.botAccount);
     const currentVp = utils.getVotingPower(userData[0]);
+
     logger.info(`Current voting power: ${currentVp}`);
 
     if (currentVp < 100) {
@@ -22,23 +43,34 @@ exports.startRound = async (round) => {
       /**
        * Calculate remaining time to reach 100%
        */
-      const timeToRechargeSeconds = utils.calculateNextRoundTime(currentVp);
-      const timeToRechargeMinutes = Math.floor(timeToRechargeSeconds / 60);
+      const timeToRechargeMinutes = Math.floor(utils.calculateNextRoundTime(currentVp) / 60);
 
       logger.info(`Next round will start in ${timeToRechargeMinutes} minutes`);
 
       /**
-       * schedule next round
+       * schedule next round, cancel current round, and stop the function.
        */
-      const nextScheduleDate = moment(new Date()).add(timeToRechargeMinutes, 'm').toDate();
-      scheduler.scheduleNextRound(nextScheduleDate);
-
-      /**
-       * Cancel current round and stop the funciton.
-       */
+      utils.scheduleNextRound(timeToRechargeMinutes, 'm');
       round.cancel();
       return;
     }
+
+    /**
+     * Check the queue for pending posts.
+     */
+    const posts = await getPostsQueue();
+
+    if (posts.length === 0) {
+      logger.info('There are not posts to vote. Scheduling voting round to one hour later.');
+
+      /**
+       * schedule next round, cancel current round, and stop the function.
+       */
+      utils.scheduleNextRound(1, 'h');
+      round.cancel();
+      return;
+    }
+
 
     // After done, re-schedule a job
     const t = new Date();
