@@ -3,6 +3,8 @@ const httpStatus = require('http-status');
 const User = require('../models/user.model');
 const config = require('../../config/vars');
 const helper = require('../utils/Helper');
+const BotQueue = require('../models/queue.model');
+const logger = require('../../config/logger');
 
 /**
  * Method to find or create a new user
@@ -40,6 +42,20 @@ const createUser = async (username, next) => {
   }
 };
 
+const createQueuePost = async (post, score) => {
+  try {
+    const queuePost = new BotQueue({
+      permalink: post.permlink,
+      author: post.author,
+      weight: score, // to be determined
+    });
+
+    await BotQueue.create(queuePost);
+  } catch (err) {
+    logger.error(err);
+  }
+};
+
 /**
  * Method to moderate a post
  * @param {Object} req: url params
@@ -51,7 +67,7 @@ const createUser = async (username, next) => {
 exports.moderatePost = async (req, res, next) => {
   try {
     // Grab the permlink from the post request
-    const { approved } = req.body;
+    const { approved, score } = req.body;
 
     // Grab the moderator username from the locals
     const moderator = res.locals.username;
@@ -95,10 +111,14 @@ exports.moderatePost = async (req, res, next) => {
           'moderation.moderatedBy': moderator,
           'moderation.moderatedAt': +new Date(),
           'moderation.reserved': false,
+          'moderation.score': score || 0,
         });
 
         // Deliver notification to client side.
         io.in(post.author).emit('notification', notification);
+
+        // If the moderation is approved, add the post to the queue
+        if (approved === true) createQueuePost(post, score);
 
         // If the post is moderated correctly, send the message to the client.
         return res.status(httpStatus.OK).send({
@@ -121,7 +141,11 @@ exports.moderatePost = async (req, res, next) => {
       'moderation.approved': approved,
       'moderation.moderatedBy': moderator,
       'moderation.moderatedAt': +new Date(),
+      'moderation.score': score || 0,
     });
+
+    // If the moderation is approved, add the post to the queue
+    if (approved === true) createQueuePost(post, score);
 
     // Deliver notification to client side.
     io.in(post.author).emit('notification', notification);

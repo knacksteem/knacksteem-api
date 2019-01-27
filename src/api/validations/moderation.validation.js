@@ -20,6 +20,7 @@ module.exports = {
     body: {
       permlink: Joi.string().required(),
       approved: Joi.boolean().required(),
+      score: Joi.number().min(0).max(100).default(0),
     },
   },
   // POST /v1/moderation/reserve

@@ -62,9 +62,7 @@ exports.getAccountDetails = async (accountName) => {
 exports.calculateNextRoundTime = (currentVp) => {
   // 432000 sec = 5 days -- Recharged amount per 24 hours is 20% 5 * 20 = 100%
   // 4320 sec = 1.2 hours -- Recharged amount per hour is 1.2
-
-  const missingVp = 100 - currentVp;
-  const timeToRechargeSeconds = (missingVp * 4320);
+  const timeToRechargeSeconds = ((100 - currentVp) * 4320);
 
   return timeToRechargeSeconds;
 };

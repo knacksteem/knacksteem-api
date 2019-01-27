@@ -6,24 +6,10 @@ const config = require('../../config/vars');
 const botQueue = require('../models/queue.model');
 
 /**
- * Gets all posts into the bot queue.
- * @private
- * @author Jayser Mendez
- * @returns An array with the posts.
- */
-const getPostsQueue = async () => {
-  try {
-    return await botQueue.find().sort({ createdAt: 1 });
-  } catch (err) {
-    logger.error(err);
-    return [];
-  }
-};
-
-/**
  * Starts the voting round.
  * @param {node-schedule} round: node-schedule object
  * @public
+ * @author Jayser Mendez
  */
 exports.startRound = async (round) => {
   try {
@@ -50,8 +36,7 @@ exports.startRound = async (round) => {
       /**
        * schedule next round, cancel current round, and stop the function.
        */
-      utils.scheduleNextRound(timeToRecharge, 's');
-      round.cancel();
+      rescheduleAndCancel(timeToRecharge, 's', round);
       return;
     }
 
@@ -66,11 +51,16 @@ exports.startRound = async (round) => {
       /**
        * schedule next round, cancel current round, and stop the function.
        */
-      utils.scheduleNextRound(1, 'h');
-      round.cancel();
+      rescheduleAndCancel(1, 'h', round);
       return;
     }
 
+    posts.map(async (post) => {
+      // Check how much VP will take this vote
+
+      // Process each post
+      processPost(post);
+    });
 
     // After done, re-schedule a job
     const t = new Date();
@@ -79,4 +69,44 @@ exports.startRound = async (round) => {
   } catch (err) {
     logger.error(err);
   }
+};
+
+/**
+ * Gets all posts into the bot queue.
+ * @private
+ * @author Jayser Mendez
+ * @returns An array with the posts.
+ */
+const getPostsQueue = async () => {
+  try {
+    return await botQueue.find().sort({ createdAt: 1 });
+  } catch (err) {
+    logger.error(err);
+    return [];
+  }
+};
+
+  /**
+   * Process post: upvote, comment, allocate knacktokens.
+   * @param {Object} post: Post object.
+   * @private
+   * @author Jayser Mendez
+   */
+const processPost = async (post) => {
+  try {
+    // process post
+  } catch (err) {
+    logger.error(err);
+  }
+};
+
+  /**
+   *
+   * @param {number} time: Seconds, minutes, or hours to the next schedule.
+   * @param {string} format: 'h' for hour, 'm' for minute, 's' for second.
+   * @param {node-schedule} round: node-schedule object.
+   */
+const rescheduleAndCancel = (time, format, round) => {
+  utils.scheduleNextRound(time, format);
+  round.cancel();
 };
