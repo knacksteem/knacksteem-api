@@ -80,7 +80,7 @@
     "remarkable": "^1.7.1",
     "request-promise-native": "^1.0.5",
     "socket.io": "^2.2.0",
-    "steem": "^0.7.1",
+    "steem": "^0.7.4",
     "steemconnect": "^2.0.1",
     "striptags": "^3.1.1",
     "uuid": "^3.3.2",

@@ -1,5 +1,4 @@
 /* eslint-disable no-await-in-loop */
-/* eslint-disable no-unused-vars */
 const utils = require('./utils.bot');
 const logger = require('../../config/logger');
 const config = require('../../config/vars');
@@ -113,11 +112,17 @@ const getPostsQueue = async () => {
    */
 const processPost = async (post) => {
   try {
-    // process post
-    console.log(post.weight);
+    // Vote the post
+    await utils.votePost(post.author, post.permalink, post.weight);
+
+    // Leave a comment in the post
+    await utils.commentPost(post.author, post.permalink);
 
     // Add KNT to user
     await utils.addKntToUser(post.author, post.score);
+
+    // Delete post from queue
+    await utils.deleteFromQueue(post.permalink);
   } catch (err) {
     logger.error(err);
   }
