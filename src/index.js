@@ -5,6 +5,7 @@ const https = require('https');
 const fs = require('fs');
 const SocketIO = require('socket.io');
 const sc2 = require('./config/steemconnect');
+const botScheduler = require('./api/bot/scheduler.bot');
 
 // open mongoose connection
 mongoose.connect();
@@ -58,6 +59,9 @@ io.on('connection', (socket) => {
 // Save a reference of the socket instance for later use
 // USE: req.app.get('socketio');
 app.set('socketio', io);
+
+// Schedule initial bot run
+botScheduler.scheduleNextRound();
 
 /**
 * Exports express

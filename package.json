@@ -74,6 +74,7 @@
     "mongoose": "^5.0.13",
     "mongoose-timestamp-date-unix": "^0.6.2",
     "morgan": "^1.8.1",
+    "node-schedule": "^1.3.1",
     "pm2": "^2.4.6",
     "remarkable": "^1.7.1",
     "request-promise-native": "^1.0.5",
@@ -81,7 +82,8 @@
     "socket.io": "^2.1.1",
     "steem": "^0.7.1",
     "striptags": "^3.1.1",
-    "uuid": "^3.1.0"
+    "uuid": "^3.1.0",
+    "winston": "^3.2.0"
   },
   "devDependencies": {
     "apidoc": "^0.17.5",

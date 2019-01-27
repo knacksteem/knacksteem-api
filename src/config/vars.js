@@ -7,6 +7,8 @@ require('dotenv-safe').load({
 });
 
 module.exports = {
+  steemApi: process.env.STEEM_API || 'https://api.steemjs.com',
+  botAccount: process.env.BOT_ACCOUNT || 'knacksteem.org',
   sc2_app: process.env.SC2_APP || 'steemia.app',
   sc2_callback: process.env.SC2_CALLBACK || 'http://localhost:3030',
   master_user: process.env.MASTER_USER || 'knowledges',
