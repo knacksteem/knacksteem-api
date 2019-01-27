@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const timestamps = require('mongoose-timestamp-date-unix');
 
-mongoose.set('useCreateIndex', true);
-
 /**
  * BotQueue Schema
  * @author Jayser Mendez
@@ -21,7 +19,7 @@ const queueSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  weigth: {
+  weight: {
     type: Number,
     required: true,
     trim: true,

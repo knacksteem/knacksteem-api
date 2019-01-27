@@ -8,6 +8,9 @@ const logger = require('./../config/logger');
 // set mongoose Promise to Bluebird
 mongoose.Promise = Promise;
 
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+
 // Exit application on error
 mongoose.connection.on('error', (err) => {
   logger.error(`MongoDB connection error: ${err}`);

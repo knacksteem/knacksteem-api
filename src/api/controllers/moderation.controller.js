@@ -105,7 +105,7 @@ exports.moderatePost = async (req, res, next) => {
       // If so, this user is allowed to moderate the post even if it is reserved
       if (post.moderation.reservedBy === moderator) {
         // Update the post with the moderation data
-        await post.update({
+        await post.updateOne({
           'moderation.moderated': true,
           'moderation.approved': approved,
           'moderation.moderatedBy': moderator,
@@ -136,7 +136,7 @@ exports.moderatePost = async (req, res, next) => {
     // Since the post is not reserved, a direct moderation can be done.
 
     // Update the post with the moderation data
-    await post.update({
+    await post.updateOne({
       'moderation.moderated': true,
       'moderation.approved': approved,
       'moderation.moderatedBy': moderator,
@@ -305,7 +305,7 @@ exports.reservePost = async (req, res, next) => {
     reservedUntil.setHours(d1.getHours() + 1);
 
     // Update the post with the reservation data
-    await post.update({
+    await post.updateOne({
       'moderation.reserved': true, // Can be voided if the reservedUntil is expired
       'moderation.reservedBy': moderator,
       'moderation.reservedUntil': reservedUntil, // Only 1 hour
@@ -408,7 +408,7 @@ exports.createMember = role => async (req, res, next) => {
       const user = await createUser(username);
 
       // Update user object with new roles
-      await user.update({
+      await user.updateOne({
         $set: { roles: ['contributor', 'moderator'] },
       });
 
@@ -427,7 +427,7 @@ exports.createMember = role => async (req, res, next) => {
         const user = await createUser(username);
 
         // Update user object with new roles
-        await user.update({
+        await user.updateOne({
           $set: { roles: ['contributor', 'moderator', 'supervisor'] },
         });
 
@@ -499,7 +499,7 @@ exports.removeRole = role => async (req, res, next) => {
       // Check if the user provided is a supervisor and the team member is a master supervisor
       } else if (user.roles.indexOf('supervisor') > -1 && teamMember === config.master_user) {
         // Otherwise, the master supervisor is doing it, proceed.
-        await user.update({
+        await user.updateOne({
           $pull: { roles: 'supervisor' },
         });
 
@@ -520,7 +520,7 @@ exports.removeRole = role => async (req, res, next) => {
       // Check if the user is currently a moderator
       if (user.roles.indexOf('moderator') > -1) {
         // Pull the moderator role from this user
-        await user.update({
+        await user.updateOne({
           $pull: { roles: 'moderator' },
         });
 
