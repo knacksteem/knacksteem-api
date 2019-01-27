@@ -362,6 +362,9 @@ exports.resetStatus = async (req, res, next) => {
       },
     );
 
+    // remove the post from the queue
+    await BotQueue.findOneAndRemove({ permalink: permlink });
+
     // If the post is returned, it means that it was edited correctly. Let the client know it.
     if (post) {
       return res.send({
