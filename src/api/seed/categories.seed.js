@@ -1,4 +1,5 @@
 const Category = require('../models/category.model');
+const logger = require('../../config/logger');
 
 // Batch of initial categories
 const initialCategories = [
@@ -36,6 +37,7 @@ exports.seedCategories = async () => {
     }
     return false;
   } catch (err) {
+    logger.error(err);
     return false;
   }
 };

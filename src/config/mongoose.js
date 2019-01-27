@@ -51,8 +51,8 @@ const createMasterUser = async (username) => {
   * @returns {object} Mongoose connection
   * @public
   */
-exports.connect = () => {
-  mongoose.connect(mongo.uri, { keepAlive: 1, useNewUrlParser: true }, () => {
+exports.connect = async () => {
+  mongoose.connect(mongo.uri, { keepAlive: 1, useNewUrlParser: true }, async () => {
     // Check if the user count is 0. If so, declare the master user.
     User.countDocuments((err, count) => {
       if (!err && count === 0) {
@@ -60,8 +60,11 @@ exports.connect = () => {
       }
     });
 
-    // Insert the initial batch of categories into the database
-    seed.categoriesSeed.seedCategories();
+    // Insert the initial batch of categories into the database.
+    await seed.categoriesSeed.seedCategories();
+
+    // Insert the initial batch of delegators into the database.
+    await seed.delegatorsSeed.seedDelegators();
   });
   return mongoose.connection;
 };

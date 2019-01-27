@@ -8,6 +8,7 @@ require('dotenv-safe').load({
 
 module.exports = {
   maxKNT: 250,
+  delegationsAccount: 'knacksteem.org',
   steemApi: process.env.STEEM_API || 'https://api.steemjs.com',
   botAccount: process.env.BOT_ACCOUNT || 'knacksteem.org',
   botKey: process.env.BOT_KEY,

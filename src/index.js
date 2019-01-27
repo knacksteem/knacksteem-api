@@ -7,6 +7,7 @@ const SocketIO = require('socket.io');
 const sc2 = require('./config/steemconnect');
 const botScheduler = require('./api/bot/scheduler.bot');
 const logger = require('./config/logger');
+const delegatorsPolling = require('./api/pollers/delegators.poller');
 
 // open mongoose connection
 mongoose.connect();
@@ -63,6 +64,9 @@ app.set('socketio', io);
 
 // Schedule initial bot run
 botScheduler.scheduleNextRound(new Date(new Date().getTime() + 10000));
+
+// Start delegatos polling job
+delegatorsPolling.start();
 
 /**
 * Exports express
