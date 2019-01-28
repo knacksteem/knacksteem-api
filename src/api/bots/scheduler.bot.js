@@ -1,6 +1,7 @@
 const schedule = require('node-schedule');
 const botJob = require('./curation.bot');
 const delegatorsJob = require('./delegators.bot');
+const logger = require('../../config/logger');
 
 /**
  * Schedules the next voting round.
@@ -20,6 +21,7 @@ exports.scheduleNextVotingRound = (date) => {
  * @author Jayser Mendez
  */
 exports.scheduleDelegatorsBot = () => {
+  logger.info('Delegators\' token distribution will run daily at 12PM server time.');
   const rule = new schedule.RecurrenceRule();
   rule.dayOfWeek = [0, new schedule.Range(0, 6)];
   rule.hour = 12;
