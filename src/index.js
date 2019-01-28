@@ -5,9 +5,8 @@ const https = require('https');
 const fs = require('fs');
 const SocketIO = require('socket.io');
 const sc2 = require('./config/steemconnect');
-const botScheduler = require('./api/bot/scheduler.bot');
+const botScheduler = require('./api/bots/scheduler.bot');
 const logger = require('./config/logger');
-const delegatorsPolling = require('./api/pollers/delegators.poller');
 
 // open mongoose connection
 mongoose.connect();
@@ -62,11 +61,11 @@ io.on('connection', (socket) => {
 // USE: req.app.get('socketio');
 app.set('socketio', io);
 
-// Schedule initial bot run
-botScheduler.scheduleNextRound(new Date(new Date().getTime() + 10000));
+// Schedule initial bot voting run
+botScheduler.scheduleNextVotingRound(new Date(new Date().getTime() + 10000));
 
-// Start delegatos polling job
-delegatorsPolling.start();
+// Schedule delegators token distribution
+botScheduler.scheduleDelegatorsBot();
 
 /**
 * Exports express

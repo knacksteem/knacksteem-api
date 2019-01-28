@@ -7,6 +7,7 @@ const moment = require('moment');
 const User = require('../models/user.model');
 const steem = require('steem');
 const BotQueue = require('../models/queue.model');
+const delegatorsPoller = require('../pollers/delegators.poller');
 
 const COMMENT_TEMPLATE = '\
 <p>Hey @{}!</p> \
@@ -84,7 +85,7 @@ exports.calculateNextRoundTime = currentVp => ((100 - currentVp) * 4320);
  */
 exports.scheduleNextRound = (time, format) => {
   const nextScheduleDate = moment(new Date()).add(time, format).toDate();
-  scheduler.scheduleNextRound(nextScheduleDate);
+  scheduler.scheduleNextVotingRound(nextScheduleDate);
 };
 
 /**
@@ -106,6 +107,21 @@ exports.addKntToUser = async (username, score) => {
   try {
     const knt = (score * config.maxKNT) / 100;
     await User.findOneAndUpdate({ username }, { $inc: { tokens: knt } }, { upsert: true, multi: true });
+  } catch (err) {
+    logger.error(err);
+  }
+};
+
+/**
+ * Adds KNT tokens to the delegator.
+ * @param {string} username: Username.
+ * @param {number} kntAmount: Amount of knt to add.
+ * @public
+ * @author Jayser Mendez
+ */
+exports.addKntToDelegator = async (username, kntAmount) => {
+  try {
+    await User.findOneAndUpdate({ username }, { $inc: { tokens: kntAmount } }, { upsert: true, multi: true });
   } catch (err) {
     logger.error(err);
   }
@@ -143,14 +159,16 @@ exports.commentPost = async (author, permalink) => new Promise((resolve) => {
   const customTemplate = COMMENT_TEMPLATE.replace('{}', author);
   const parentPermlink = Math.random().toString(36).substring(2);
 
-  steem.broadcast.comment(config.botKey, author, permalink, config.botAccount, parentPermlink, '', customTemplate, { app: 'knacksteem' }, (err, result) => {
-    if (err) {
-      logger.error(err);
-      resolve(err);
-    }
+  steem
+    .broadcast
+    .comment(config.botKey, author, permalink, config.botAccount, parentPermlink, '', customTemplate, { app: 'knacksteem' }, (err, result) => {
+      if (err) {
+        logger.error(err);
+        resolve(err);
+      }
 
-    resolve(result);
-  });
+      resolve(result);
+    });
 });
 
 /**
@@ -162,6 +180,69 @@ exports.commentPost = async (author, permalink) => new Promise((resolve) => {
 exports.deleteFromQueue = async (permalink) => {
   try {
     await BotQueue.findOneAndRemove({ permalink });
+  } catch (err) {
+    logger.error(err);
+  }
+};
+
+/**
+ * Converts vesting shares to steem.
+ * @param {Number} vestingShares: Vesting shares amount.
+ * @returns The amount of vesting shares in steem.
+ * @public
+ * @author Jayser Mendez
+ */
+exports.vestToSteem = async (vestingShares) => {
+  try {
+    let totalVestingShares = null;
+    let totalVestingFundSteem = null;
+
+    await steem.api.getDynamicGlobalPropertiesAsync().then((result) => {
+      totalVestingShares = result.total_vesting_shares;
+      totalVestingFundSteem = result.total_vesting_fund_steem;
+    }).catch((err) => {
+      if (err) logger.info(err);
+    });
+
+    return steem.formatter.vestToSteem(vestingShares, totalVestingShares, totalVestingFundSteem);
+  } catch (err) {
+    logger.error(err);
+    return null;
+  }
+};
+
+/**
+ * Syncs delegators to json file and database.
+ * @public
+ * @author Jayser Mendez
+ */
+exports.delegatorsSync = async () => {
+  try {
+    // re-sync delegators
+    await delegatorsPoller.start();
+  } catch (err) {
+    logger.error(err);
+  }
+};
+
+/**
+ * Insert missing delegators into database.
+ * @public
+ * @author Jayser Mendez
+ */
+exports.reSeedDelegators = async (delegators) => {
+  try {
+    delegators.map(async (user) => {
+      const delegatorUser = await User.findOne({ username: user.delegator });
+
+      if (!delegatorUser) {
+        const newUser = new User({
+          username: user.delegator,
+        });
+
+        await User.create(newUser);
+      }
+    });
   } catch (err) {
     logger.error(err);
   }

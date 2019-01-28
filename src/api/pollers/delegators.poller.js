@@ -23,7 +23,9 @@ const getData = async () => {
     data = sorted;
 
     return res;
-  }).catch(err => err);
+  }).catch((err) => {
+    if (err) logger.info(err);
+  });
 
   if (store.length === 0) {
     store = data;
@@ -71,7 +73,9 @@ const getData = async () => {
       return 0;
     });
 
-    fs.writeFile('src/assets/delegations.json', JSON.stringify(sorted), err => logger.info(err));
+    fs.writeFile('src/assets/delegations.json', JSON.stringify(sorted), (err) => {
+      if (err) logger.info(err);
+    });
 
     return null;
   }
@@ -82,10 +86,8 @@ const getData = async () => {
 
 exports.start = async () => {
   logger.info('Starting delegators polling service...');
-  setInterval(async () => {
-    await getData().catch(err => logger.info(err));
-    logger.info('Delegations downloaded.', Date.now());
-    return null;
-  }, 600000);
-  return null;
+  await getData().catch((err) => {
+    if (err) logger.info(err);
+  });
+  logger.info('Delegations downloaded.', Date.now());
 };

@@ -7,6 +7,7 @@ require('dotenv-safe').load({
 });
 
 module.exports = {
+  maxKNTDaily: 100000,
   maxKNT: 250,
   delegationsAccount: 'knacksteem.org',
   steemApi: process.env.STEEM_API || 'https://api.steemjs.com',

@@ -62,9 +62,6 @@ exports.connect = async () => {
 
     // Insert the initial batch of categories into the database.
     await seed.categoriesSeed.seedCategories();
-
-    // Insert the initial batch of delegators into the database.
-    await seed.delegatorsSeed.seedDelegators();
   });
   return mongoose.connection;
 };
