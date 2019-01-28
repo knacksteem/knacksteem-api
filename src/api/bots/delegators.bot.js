@@ -15,6 +15,7 @@ const config = require('../../config/vars');
  */
 exports.startTokenDistribution = async (schedule) => {
   try {
+    logger.info('Starting synching the delegators into delegations.json file...');
     // Sync delegators
     await utils.delegatorsSync();
 
@@ -25,6 +26,7 @@ exports.startTokenDistribution = async (schedule) => {
     const jsonPath = path.join(__dirname, '..', '..', 'assets', 'delegations.json');
     const delegators = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
 
+    logger.info('Starting re-seeding delegators users into database...');
     // Re-sync delegators into database
     await utils.reSeedDelegators(delegators);
 
@@ -41,14 +43,19 @@ exports.startTokenDistribution = async (schedule) => {
       });
     }
 
+    logger.info('Starting tokens distributions...');
     // distrubte tokens
     for (const delegator of steemDelegations) {
       const kntRewards = (delegator.delegation * config.maxKNTDaily) / totalDelegated;
 
       await utils.addKntToDelegator(delegator.user, kntRewards);
     }
+
+    // Cancel the job to allow the other job to start.
+    schedule.cancel();
   } catch (err) {
     logger.error(err);
+    schedule.cancel();
   }
 };
 
