@@ -3,6 +3,9 @@ const httpStatus = require('http-status');
 const User = require('../models/user.model');
 const config = require('../../config/vars');
 const helper = require('../utils/Helper');
+const BotQueue = require('../models/queue.model');
+const logger = require('../../config/logger');
+const Category = require('../models/category.model');
 
 /**
  * Method to find or create a new user
@@ -41,6 +44,31 @@ const createUser = async (username, next) => {
 };
 
 /**
+ * Insert post into the bot queue.
+ * @param {Object} post: Post object.
+ * @param {number} score: Moderation score.
+ * @private
+ * @author Jayser Mendez
+ */
+const createQueuePost = async (post, score) => {
+  try {
+    const category = await Category.findOne({ name: post.category });
+    const weight = (score * category.scoreCap) / 100;
+
+    const queuePost = new BotQueue({
+      permalink: post.permlink,
+      author: post.author,
+      weight,
+      score,
+    });
+
+    await BotQueue.create(queuePost);
+  } catch (err) {
+    logger.error(err);
+  }
+};
+
+/**
  * Method to moderate a post
  * @param {Object} req: url params
  * @param {Function} res: Express.js response callback
@@ -51,7 +79,7 @@ const createUser = async (username, next) => {
 exports.moderatePost = async (req, res, next) => {
   try {
     // Grab the permlink from the post request
-    const { approved } = req.body;
+    const { approved, score } = req.body;
 
     // Grab the moderator username from the locals
     const moderator = res.locals.username;
@@ -89,16 +117,20 @@ exports.moderatePost = async (req, res, next) => {
       // If so, this user is allowed to moderate the post even if it is reserved
       if (post.moderation.reservedBy === moderator) {
         // Update the post with the moderation data
-        await post.update({
+        await post.updateOne({
           'moderation.moderated': true,
           'moderation.approved': approved,
           'moderation.moderatedBy': moderator,
           'moderation.moderatedAt': +new Date(),
           'moderation.reserved': false,
+          'moderation.score': score || 0,
         });
 
         // Deliver notification to client side.
         io.in(post.author).emit('notification', notification);
+
+        // If the moderation is approved, add the post to the queue
+        if (approved === true) createQueuePost(post, score);
 
         // If the post is moderated correctly, send the message to the client.
         return res.status(httpStatus.OK).send({
@@ -116,12 +148,16 @@ exports.moderatePost = async (req, res, next) => {
     // Since the post is not reserved, a direct moderation can be done.
 
     // Update the post with the moderation data
-    await post.update({
+    await post.updateOne({
       'moderation.moderated': true,
       'moderation.approved': approved,
       'moderation.moderatedBy': moderator,
       'moderation.moderatedAt': +new Date(),
+      'moderation.score': score || 0,
     });
+
+    // If the moderation is approved, add the post to the queue
+    if (approved === true) createQueuePost(post, score);
 
     // Deliver notification to client side.
     io.in(post.author).emit('notification', notification);
@@ -281,7 +317,7 @@ exports.reservePost = async (req, res, next) => {
     reservedUntil.setHours(d1.getHours() + 1);
 
     // Update the post with the reservation data
-    await post.update({
+    await post.updateOne({
       'moderation.reserved': true, // Can be voided if the reservedUntil is expired
       'moderation.reservedBy': moderator,
       'moderation.reservedUntil': reservedUntil, // Only 1 hour
@@ -338,6 +374,9 @@ exports.resetStatus = async (req, res, next) => {
       },
     );
 
+    // remove the post from the queue
+    await BotQueue.findOneAndRemove({ permalink: permlink });
+
     // If the post is returned, it means that it was edited correctly. Let the client know it.
     if (post) {
       return res.send({
@@ -384,7 +423,7 @@ exports.createMember = role => async (req, res, next) => {
       const user = await createUser(username);
 
       // Update user object with new roles
-      await user.update({
+      await user.updateOne({
         $set: { roles: ['contributor', 'moderator'] },
       });
 
@@ -403,7 +442,7 @@ exports.createMember = role => async (req, res, next) => {
         const user = await createUser(username);
 
         // Update user object with new roles
-        await user.update({
+        await user.updateOne({
           $set: { roles: ['contributor', 'moderator', 'supervisor'] },
         });
 
@@ -475,7 +514,7 @@ exports.removeRole = role => async (req, res, next) => {
       // Check if the user provided is a supervisor and the team member is a master supervisor
       } else if (user.roles.indexOf('supervisor') > -1 && teamMember === config.master_user) {
         // Otherwise, the master supervisor is doing it, proceed.
-        await user.update({
+        await user.updateOne({
           $pull: { roles: 'supervisor' },
         });
 
@@ -496,7 +535,7 @@ exports.removeRole = role => async (req, res, next) => {
       // Check if the user is currently a moderator
       if (user.roles.indexOf('moderator') > -1) {
         // Pull the moderator role from this user
-        await user.update({
+        await user.updateOne({
           $pull: { roles: 'moderator' },
         });
 

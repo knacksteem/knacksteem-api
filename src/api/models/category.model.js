@@ -18,6 +18,11 @@ const categorySchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  scoreCap: {
+    type: Number,
+    required: true,
+    trim: true,
+  },
 });
 
 // Declare index in category schema for faster query.

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const timestamps = require('mongoose-timestamp-date-unix');
+
 /**
  * User Schema
  * @private
@@ -31,6 +32,10 @@ const userSchema = new mongoose.Schema({
   bannedBy: {
     type: String,
     default: null,
+  },
+  tokens: {
+    type: Number,
+    default: 0,
   },
 });
 

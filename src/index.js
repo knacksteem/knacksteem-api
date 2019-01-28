@@ -5,6 +5,8 @@ const https = require('https');
 const fs = require('fs');
 const SocketIO = require('socket.io');
 const sc2 = require('./config/steemconnect');
+const botScheduler = require('./api/bots/scheduler.bot');
+const logger = require('./config/logger');
 
 // open mongoose connection
 mongoose.connect();
@@ -21,7 +23,7 @@ if (env === 'production') {
   server = https.createServer(options, app);
   server.listen(port);
 } else {
-  server = app.listen(port, () => console.info(`server started on port ${port} (${env})`));
+  server = app.listen(port, () => logger.info(`server started on port ${port} (${env})`));
 }
 
 // Initialize Socket Server over the same port
@@ -58,6 +60,12 @@ io.on('connection', (socket) => {
 // Save a reference of the socket instance for later use
 // USE: req.app.get('socketio');
 app.set('socketio', io);
+
+// Schedule initial bot voting run
+botScheduler.scheduleNextVotingRound(new Date(new Date().getTime() + 10000));
+
+// Schedule delegators token distribution
+botScheduler.scheduleDelegatorsBot();
 
 /**
 * Exports express

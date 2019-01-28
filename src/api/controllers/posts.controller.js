@@ -67,7 +67,7 @@ exports.updateTags = async (req, res, next) => {
       });
     }
 
-    await Post.update({ permlink }, { tags });
+    await Post.updateOne({ permlink }, { tags });
 
     return res.status(httpStatus.OK).send({
       status: httpStatus.OK,
