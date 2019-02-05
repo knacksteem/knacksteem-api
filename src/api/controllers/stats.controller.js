@@ -298,6 +298,7 @@ exports.allUsers = async (req, res, next) => {
         banReason: 1,
         bannedBy: 1,
         createdAt: 1,
+        tokens: 1,
       });
 
     // Check if there is a response
