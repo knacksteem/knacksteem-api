@@ -50,12 +50,8 @@ exports.startTokenDistribution = async (schedule) => {
 
       await utils.addKntToDelegator(delegator.user, kntRewards);
     }
-
-    // Cancel the job to allow the other job to start.
-    schedule.cancel();
   } catch (err) {
     logger.error(err);
-    schedule.cancel();
   }
 };
 
