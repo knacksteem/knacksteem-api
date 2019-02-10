@@ -52,7 +52,7 @@ const createUser = async (username, next) => {
  */
 const createQueuePost = async (post, score) => {
   try {
-    const category = await Category.findOne({ name: post.category });
+    const category = await Category.findOne({ key: post.category });
     const weight = (score * category.scoreCap) / 100;
 
     const queuePost = new BotQueue({
