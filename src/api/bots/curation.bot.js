@@ -3,6 +3,7 @@ const utils = require('./utils.bot');
 const logger = require('../../config/logger');
 const config = require('../../config/vars');
 const botQueue = require('../models/queue.model');
+const steem = require('steem');
 
 /**
  * Starts the voting round.
@@ -17,7 +18,10 @@ exports.startRound = async (round) => {
     /**
      * Determine the current voting power
      */
-    const userData = await utils.getAccountDetails(config.botAccount);
+    //const userData = await utils.getAccountDetails(config.botAccount);
+
+    const userData = await steem.api.getAccountsAsync([config.botAccount]);
+    
     let currentVp = utils.getVotingPower(userData[0]);
 
     logger.info(`Current voting power: ${currentVp}`);

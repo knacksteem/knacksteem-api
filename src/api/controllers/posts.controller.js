@@ -125,16 +125,18 @@ exports.getPosts = async (req, res, next) => {
       urls.push(`https://api.steemjs.com/get_content?author=${post.author}&permlink=${post.permlink}`);
       category.push(post.category);
       tags.push(post.tags);
-      moderation.push(post.moderation);
+      moderation.push(post.moderation); 
     });
 
     // Track the index of the posts
     let index = -1;
 
     // Do all the http calls and grab the results at the end. it will do 15 parallel calls.
-    async.mapLimit(urls, 15, async (url) => {
+    async.mapLimit(postsList, 15, async (post) => {
       // Fetch the http GET call results
-      const response = await request({ url, json: true });
+      //const response = await request({ url, json: true });
+
+      const response = await steem.api.getContentAsync(post.author, post.permlink);
 
       // If the post does not have an id, skip it
       if (!response.id) {
@@ -260,10 +262,12 @@ exports.getVotes = async (req, res, next) => {
     }
 
     // Construct the url for the http call
-    const url = `https://api.steemjs.com/get_content?author=${author}&permlink=${permlink}`;
+    //const url = `https://api.steemjs.com/get_content?author=${author}&permlink=${permlink}`;
 
     // Make a GET call to the url and grab the results
-    const post = await request({ url, json: true });
+    //const post = await request({ url, json: true });
+
+    const post = await steem.api.getContentAsync(author, permlink);
 
     // If there are not results from this post, let the client know.
     if (!post.id) {
@@ -339,10 +343,12 @@ exports.getSinglePost = async (req, res, next) => {
     }
 
     // Construct the url for the http call
-    const url = `https://api.steemjs.com/get_content?author=${author}&permlink=${permlink}`;
+    //const url = `https://api.steemjs.com/get_content?author=${author}&permlink=${permlink}`;
 
     // Make a GET call to the url and grab the results
-    const post = await request({ url, json: true });
+    //const post = await request({ url, json: true });
+
+    const post = await steem.api.getContentAsync(author, permlink);
 
     // If there are not results from this post, let the client know.
     if (!post.id) {
@@ -461,10 +467,12 @@ exports.getComments = async (req, res, next) => {
     }
 
     // Construct the url for the http call
-    const url = `https://api.steemjs.com/get_content?author=${author}&permlink=${permlink}`;
+    //const url = `https://api.steemjs.com/get_content?author=${author}&permlink=${permlink}`;
 
     // Make a GET call to the url and grab the results
-    const post = await request({ url, json: true });
+    //const post = await request({ url, json: true });
+
+    const post = await steem.api.getContentAsync(author, permlink);
 
     // If there are not results from this post, let the client know.
     if (!post.id) {

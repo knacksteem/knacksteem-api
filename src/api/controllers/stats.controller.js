@@ -114,6 +114,8 @@ exports.sendStats = filter => async (req, res, next) => {
     // Hold the moderation info of each post
     const moderation = [];
 
+    const postInfo = JSON.parse(postsList);
+
     // Iterate over the results from the database to generate the urls.
     postsList.forEach((post) => {
       urls.push(`https://api.steemjs.com/get_content?author=${post.author}&permlink=${post.permlink}`);
@@ -126,9 +128,11 @@ exports.sendStats = filter => async (req, res, next) => {
     let index = -1;
 
     // Do all the http calls and grab the results at the end. it will do 15 parallel calls.
-    async.mapLimit(urls, 15, async (url) => {
+    async.mapLimit(postInfo, 15, async (post) => {
       // Fetch the http GET call results
-      const response = await request({ url, json: true });
+      //const response = await request({ url, json: true });
+
+      const response = await steem.api.getContentAsync(post.author, post.permlink);
 
       // If the post does not have an id, skip it
       if (!response.id) {
