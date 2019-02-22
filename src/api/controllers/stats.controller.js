@@ -126,9 +126,11 @@ exports.sendStats = filter => async (req, res, next) => {
     let index = -1;
 
     // Do all the http calls and grab the results at the end. it will do 15 parallel calls.
-    async.mapLimit(urls, 15, async (url) => {
+    async.mapLimit(postsList, 15, async (post) => {
       // Fetch the http GET call results
-      const response = await request({ url, json: true });
+      //const response = await request({ url, json: true });
+
+      const response = await steem.api.getContentAsync(post.author, post.permlink);
 
       // If the post does not have an id, skip it
       if (!response.id) {
